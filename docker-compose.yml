@@ -1,0 +1,81 @@
+version: "3"
+
+services:
+  elixir-mysql:
+    container_name: elixir-mysql
+    image: mariadb:latest
+    restart: unless-stopped
+    ports:
+      - $MYSQL_PORT:$MYSQL_PORT
+    volumes:
+      - $MYSQL_DIR:/var/lib/mysql:rw
+    environment:
+      TZ: Europe/Riga
+      LANG: en_US.UTF-8
+      MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
+      MYSQL_USER: $MYSQL_USER
+      MYSQL_PASSWORD: $MYSQL_PASSWORD
+      INIT_TOKUDB: 1
+      INIT_ROCKSDB: 0
+    networks:
+      elixir-net:
+    command: --sql-mode= --server-id=1 --log-bin=mysql-bin --expire_logs_days=3 ${MYSQL_CMD_ARGS}
+
+  elixir-frontend:
+    container_name: elixir-frontend
+    build:
+      context: $FRONTEND_DIR
+      dockerfile: Dockerfile
+    environment:
+      VIRTUAL_HOST: elixir.local
+    volumes:
+      - $FRONTEND_DIR:/app:rw
+    extra_hosts:
+      - "elixir.local api.elixir.local:172.17.0.1"
+    networks:
+      - elixir-net
+
+ elixir-backend:
+    container_name: elixir-backend
+    build:
+      context: $BACKEND_DIR
+      dockerfile: Dockerfile
+    depends_on:
+      - elixir-mysql
+    environment:
+      MIX_ENV: dev
+      PORT: $BACKEND_PORT
+      VIRTUAL_HOST: api.elixir.local
+    volumes:
+      - $BACKEND_DIR:/app:rw
+    extra_hosts:
+      - "elixir.local api.elixir.local:172.17.0.1"
+    networks:
+      - elixir-net
+
+  elixir-testing:
+    container_name: elixir-testing
+    build:
+      context: $TESTING_DIR
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    volumes:
+      - '$TESTING_DIR:/var/www/:rw'
+      - /var/www/node_modules
+    extra_hosts:
+      - "elixir.local api.elixir.local:172.17.0.1"
+    networks:
+      - elixir-net
+
+  elixir-proxy:
+    container_name: elixir-proxy
+    image: jwilder/nginx-proxy
+    ports:
+      - $NGINX_PORT:$NGINX_PORT
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+    networks:
+      - elixir-net
+
+networks:
+  elixir-net:
