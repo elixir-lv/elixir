@@ -9,7 +9,7 @@ nano /etc/hosts
 ```
 
 ```
-172.17.0.1      elixir.local api.elixir.local
+172.60.1.10     elixir.local
 ```
 
 ## Setup front-end, back-end, testing environment with Docker
