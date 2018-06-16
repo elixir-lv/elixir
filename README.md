@@ -33,3 +33,5 @@ In this project directory execute
 ```shell
 docker-compose up
 ```
+
+## Open [elixir.local](http://elixir.local)
