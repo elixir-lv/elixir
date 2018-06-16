@@ -1,5 +1,5 @@
-version: '3.2'
-services:  
+version: '3.6'
+services:
     elixir-frontend:
         container_name: elixir-frontend
         build:
@@ -9,10 +9,9 @@ services:
             VIRTUAL_HOST: elixir.local
         volumes:
             - '$FRONTEND_DIR:/app:rw'
-        extra_hosts:
-            - 'elixir.local api.elixir.local:172.17.0.1'
         networks:
-            - elixir-net
+            elixir-net:
+                ipv4_address: 172.60.1.10
     elixir-backend:
         container_name: elixir-backend
         build:
@@ -26,10 +25,11 @@ services:
             VIRTUAL_HOST: api.elixir.local
         volumes:
             - '$BACKEND_DIR:/app:rw'
-        extra_hosts:
-            - 'elixir.local api.elixir.local:172.17.0.1'
+        # extra_hosts:
+        #     - 'elixir.local api.elixir.local:172.60.1.10'
         networks:
-            - elixir-net
+            elixir-net:
+                ipv4_address: 172.60.1.11
     elixir-testing:
         container_name: elixir-testing
         build:
@@ -40,19 +40,20 @@ services:
             - '$TESTING_DIR:/var/www/:rw'
             - /var/www/node_modules
         extra_hosts:
-            - 'elixir.local api.elixir.local:172.17.0.1'
+            - 'elixir.local api.elixir.local:172.60.0.1'
         networks:
-            - elixir-net
+            elixir-net:
+                ipv4_address: 172.60.1.12
     elixir-mysql:
         container_name: elixir-mysql
         image: 'mariadb:latest'
         restart: unless-stopped
         ports:
             - '$MYSQL_PORT:$MYSQL_PORT'
-        volumes: 
-          - type: bind
-            source: $MYSQL_DIR
-            target: /var/lib/mysql
+        volumes:
+            - type: bind
+              source: $MYSQL_DIR
+              target: /var/lib/mysql
         environment:
             TZ: Europe/Riga
             LANG: en_US.UTF-8
@@ -62,16 +63,25 @@ services:
             INIT_TOKUDB: 1
             INIT_ROCKSDB: 0
         networks:
-            elixir-net: null
+            elixir-net:
+                ipv4_address: 172.60.1.13
         command: '--sql-mode= --server-id=1 --log-bin=mysql-bin --expire_logs_days=3 ${MYSQL_CMD_ARGS}'
     elixir-proxy:
         container_name: elixir-proxy
         image: jwilder/nginx-proxy
         ports:
             - '$NGINX_PORT:$NGINX_PORT'
-        volumes: 
+        volumes:
             - '/var/run/docker.sock:/tmp/docker.sock:ro'
         networks:
-            - elixir-net
+            elixir-net:
+                ipv4_address: 172.60.1.14
+        extra_hosts:
+            - 'elixir.local:172.60.1.10'
+            - 'api.elixir.local:172.60.1.11'
 networks:
-    elixir-net: null
+    elixir-net:
+        ipam:
+            driver: default
+            config:
+                - subnet: 172.60.0.0/16
