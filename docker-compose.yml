@@ -66,19 +66,6 @@ services:
             elixir-net:
                 ipv4_address: 172.60.1.13
         command: '--sql-mode= --server-id=1 --log-bin=mysql-bin --expire_logs_days=3 ${MYSQL_CMD_ARGS}'
-    elixir-proxy:
-        container_name: elixir-proxy
-        image: jwilder/nginx-proxy
-        ports:
-            - '$NGINX_PORT:$NGINX_PORT'
-        volumes:
-            - '/var/run/docker.sock:/tmp/docker.sock:ro'
-        networks:
-            elixir-net:
-                ipv4_address: 172.60.1.14
-        extra_hosts:
-            - 'elixir.local:172.60.1.10'
-            - 'api.elixir.local:172.60.1.11'
 networks:
     elixir-net:
         ipam:
