@@ -1,5 +1,9 @@
 ## Setup phoenix
 
+* [Install-Phoenix](https://github.com/janis-rullis/dev/blob/master/Elixir-Phoenix/Install-Phoenix.md)
+
+-----------------
+
 * [learnphoenix](https://www.learnphoenix.tv/episodes/installing-phoenix)
 * [hexdocs](https://hexdocs.pm/phoenix/installation.html)
 
