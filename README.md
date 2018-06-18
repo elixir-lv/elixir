@@ -16,13 +16,13 @@ nano /etc/hosts
 
 ### Configure
 
-### Copy the envirnoment example file
+#### Copy the envirnoment example file
 
 ```shell
 cp .env.example .env
 ```
 
-### Set values
+#### Set values
 
 Replace every 'FILL_THIS' word with a required value.
 
