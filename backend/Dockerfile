@@ -18,3 +18,4 @@ RUN apt-get install nodejs
 
 WORKDIR /app
 EXPOSE 4000
+CMD ["./run.sh"]
