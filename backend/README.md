@@ -1,5 +1,11 @@
 # ElixirBackend
 
+## Creted
+
+```shell
+mix phoenix.new elixir_backend
+```
+
 To start your Phoenix app:
 
   * Install dependencies with `mix deps.get`
