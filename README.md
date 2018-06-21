@@ -4,12 +4,17 @@ Test project so I could learn Elixir / Phoenix.
 
 ## Add to hosts
 
+### Open the local hosts
+
 ```shell
-nano /etc/hosts
+sudo nano /etc/hosts
 ```
+
+### Add this
 
 ```
 172.60.1.10     elixir.local
+172.60.1.11     api.elixir.local
 ```
 
 ## Setup front-end, back-end, testing environment with Docker
@@ -34,4 +39,7 @@ In this project directory execute
 docker-compose up
 ```
 
-## Open [elixir.local](http://elixir.local)
+## Open
+
+* [elixir.local](http://elixir.local)
+* [api.elixir.local:4000](http://api.elixir.local:4000/)
