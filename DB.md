@@ -23,4 +23,14 @@ mysql -uroot -p
 ```sql
 CREATE DATABASE `elixir`;
 ```
+## Create posts
 
+```sql
+USE `elixir`;
+
+CREATE TABLE `posts`(
+    `id` SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'MAX 65535 records',
+    `title` VARCHAR(250) NOT NULL,
+    PRIMARY KEY(`id`)
+) ENGINE = INNODB DEFAULT CHARACTER SET = UTF8;
+```
