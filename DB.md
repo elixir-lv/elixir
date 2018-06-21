@@ -28,9 +28,13 @@ CREATE DATABASE `elixir`;
 ```sql
 USE `elixir`;
 
-CREATE TABLE `posts`(
+CREATE TABLE `post`(
     `id` SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'MAX 65535 records',
     `title` VARCHAR(250) NOT NULL,
     PRIMARY KEY(`id`)
 ) ENGINE = INNODB DEFAULT CHARACTER SET = UTF8;
+
+INSERT INTO `post` (`title`) VALUES('post A'),('post B');
+
+SELECT * FROM `post`;
 ```

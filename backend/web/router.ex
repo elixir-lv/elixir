@@ -8,6 +8,6 @@ defmodule ElixirBackend.Router do
     pipe_through :api
 
     get "/", PageController, :index
-    get "/posts", PostController, :index
+    get "/posts", PostController, :show
   end
 end
