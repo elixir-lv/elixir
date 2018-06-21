@@ -48,11 +48,13 @@ config :phoenix, :stacktrace_depth, 20
 
 # Configure your database
 config :elixir_backend, ElixirBackend.Repo,
-  adapter: Ecto.Adapters.Postgres,
-  username: "postgres",
-  password: "postgres",
-  database: "elixir_backend_dev",
-  hostname: "localhost",
-  pool_size: 10
+  adapter: Ecto.Adapters.MySQL,
+  username: "root",
+  password: "FILL_THIS",
+  database: "elixir",
+  hostname: "172.60.1.13",
+  pool_size: 10,
+  timeout: 30_000,
+  pool_timeout: 40_000
 
 import_config "dev.secret.exs"
