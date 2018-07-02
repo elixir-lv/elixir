@@ -19,7 +19,7 @@ defmodule Mix.Tasks.User do
 
   def run(args) do
     {opts, _, _} = OptionParser.parse(args, aliases: [n: :full_name, f: :must_write_to_file])
-    user = %User{email: nil, name: "Janis Rullis"}
+    user = %User{email: nil, name: opts[:full_name]}
     last_name = User.last_name(user);
     IO.puts last_name
 
