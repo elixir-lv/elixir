@@ -1,0 +1,6 @@
+# This file will be added to system cron jobs when
+# this Docker container will build.
+
+# m h  dom mon dow   command
+
+* * * * * sh /app/cron-mix.sh >> /app/storage/cron.log 2>&1

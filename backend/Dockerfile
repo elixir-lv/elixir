@@ -3,8 +3,8 @@
 FROM elixir:latest
 
 # Install debian packages
-RUN apt-get update
-RUN apt-get install --yes build-essential inotify-tools
+RUN apt-get clean && apt-get -y update && apt-get install -y locales && locale-gen en_US.UTF-8
+RUN apt-get install --yes build-essential inotify-tools cron nano mc htop
 
 # Install Phoenix packages
 RUN mix local.hex --force
@@ -15,6 +15,19 @@ RUN mix archive.install --force https://github.com/phoenixframework/archives/raw
 RUN curl -sL https://deb.nodesource.com/setup_8.x -o nodesource_setup.sh
 RUN bash nodesource_setup.sh
 RUN apt-get install nodejs
+
+# Add crontab file in the cron directory
+ADD crontab /app/crontab
+RUN crontab /app/crontab
+
+# Give execution rights on the cron job
+# RUN chmod 0644 /etc/cron.d/elixir-cron
+
+# Setup all required to call tasks from crontab.
+RUN ln -s /usr/local/bin/elixir /usr/bin/elixir
+RUN ln -s /usr/local/bin/mix /usr/bin/mix
+RUN ln -s /usr/local/bin/erl /usr/bin/erl
+RUN service cron start
 
 WORKDIR /app
 EXPOSE 4000
