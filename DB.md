@@ -16,7 +16,7 @@ docker exec -it elixir-mysql bash
 ## Log into the mysql service
 
 ```shell
-
+mysql -uroot -p
 ```
 ## Create a DB
 
