@@ -13,6 +13,8 @@ defmodule Mix.Tasks.SlowQuery do
     query = "SELECT sleep(60)"
     IO.inspect  Ecto.Adapters.SQL.query!(ElixirBackend.Repo, query, [])
 
+    # TODO: Add dynamically change DB timeout
+
     # [error] Mariaex.Protocol (#PID<0.216.0>) disconnected: ** (DBConnection.ConnectionError) client #PID<0.74.0> timed out because it checked out the connection for longer than 30000ms
   end
 end
