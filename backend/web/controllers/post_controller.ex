@@ -3,8 +3,7 @@ defmodule ElixirBackend.PostController do
   alias ElixirBackend.Post
 
   def show(conn, _params) do
-    query = from(a in Post, limit: 1)
-    posts = ElixirBackend.Repo.one(query)
-    render(conn, "show.json", post: posts)
+    post = Post.get_first()
+    render(conn, "show.json", post: post)
   end
 end
