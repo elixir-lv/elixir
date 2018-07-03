@@ -18,10 +18,9 @@ RUN apt-get install nodejs
 
 # Add crontab file in the cron directory
 ADD crontab /app/crontab
-RUN crontab /app/crontab
 
-# Give execution rights on the cron job
-# RUN chmod 0644 /etc/cron.d/elixir-cron
+# Move it to system crons.
+RUN crontab /app/crontab
 
 # Setup all required to call tasks from crontab.
 RUN ln -s /usr/local/bin/elixir /usr/bin/elixir
