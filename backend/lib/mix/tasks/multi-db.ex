@@ -1,14 +1,15 @@
 defmodule Mix.Tasks.MultiDb do
   import Mix.Ecto
+  alias ElixirBackend.Repo
+  # use Ecto.Repo, otp_app: :elixir_backend
 
   @shortdoc "Example, how to switch between databases on runtime"
 
   @moduledoc """
-  * mix multi_db
+  * MIX_ENV=staging mix multi_db
   """
   use Mix.Task
-
   def run(args) do
-    exit 'multi_db'
+    exit 'MIX_ENV=staging mix multi_db'
   end
 end
