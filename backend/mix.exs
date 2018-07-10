@@ -19,14 +19,14 @@ defmodule ElixirBackend.Mixfile do
   # Type `mix help compile.app` for more information.
   def application do
     [
-      mod: {ElixirBackend, []},
-      extra_applications: [:logger]
+      mod: {ElixirBackend.Application, []},
+      extra_applications: [:logger, :runtime_tools]
     ]
   end
 
   # Specifies which paths to compile per environment.
-  defp elixirc_paths(:test), do: ["lib", "web", "test/support"]
-  defp elixirc_paths(_),     do: ["lib", "web"]
+  defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(_),     do: ["lib"]
 
   # Specifies your project dependencies.
   #
@@ -36,9 +36,7 @@ defmodule ElixirBackend.Mixfile do
       {:phoenix, "~> 1.3.3"},
       {:phoenix_pubsub, "~> 1.0"},
       {:phoenix_ecto, "~> 3.2"},
-      {:mariaex, "~> 0.8.2"},
-      {:phoenix_html, "~> 2.10"},
-      {:phoenix_live_reload, "~> 1.0", only: :dev},
+      {:mariaex, ">= 0.0.0"},
       {:gettext, "~> 0.11"},
       {:cowboy, "~> 1.0"}
     ]

@@ -1,17 +1,26 @@
 # ElixirBackend
 
-## Creted
+## Project was created with
 
 ```shell
-mix phoenix.new elixir_backend
+mix phx.new elixir_backend --no-brunch --no-html --database mysql
 ```
 
-To start your Phoenix app:
+## First steps
+
+* Config DB settings.
+* Create the DB -  `mix ecto.create`
+* Generate Users' related code - `mix phx.gen.json Users User users name:string surname:string`
+* Generate Posts' related code - `mix phx.gen.json Blog Post posts title:string user_id:integer`
+
+-------------------
+
+To start your Phoenix server:
 
   * Install dependencies with `mix deps.get`
   * Create and migrate your database with `mix ecto.create && mix ecto.migrate`
-  * Install Node.js dependencies with `npm install`
-  * Start Phoenix endpoint with `mix phoenix.server`
+  * Install Node.js dependencies with `cd assets && npm install`
+  * Start Phoenix endpoint with `mix phx.server`
 
 Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 

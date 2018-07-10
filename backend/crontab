@@ -3,4 +3,4 @@
 
 # m h  dom mon dow   command
 
-* * * * * sh /app/cron-mix.sh >> /app/storage/cron.log 2>&1
+# * * * * * sh /app/cron-mix.sh >> /app/storage/cron.log 2>&1

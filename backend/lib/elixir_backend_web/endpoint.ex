@@ -1,7 +1,7 @@
-defmodule ElixirBackend.Endpoint do
+defmodule ElixirBackendWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :elixir_backend
 
-  socket "/socket", ElixirBackend.UserSocket
+  socket "/socket", ElixirBackendWeb.UserSocket
 
   # Serve at "/" the static files from "priv/static" directory.
   #
@@ -14,12 +14,9 @@ defmodule ElixirBackend.Endpoint do
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.
   if code_reloading? do
-    socket "/phoenix/live_reload/socket", Phoenix.LiveReloader.Socket
-    plug Phoenix.LiveReloader
     plug Phoenix.CodeReloader
   end
 
-  plug Plug.RequestId
   plug Plug.Logger
 
   plug Plug.Parsers,
@@ -36,7 +33,22 @@ defmodule ElixirBackend.Endpoint do
   plug Plug.Session,
     store: :cookie,
     key: "_elixir_backend_key",
-    signing_salt: "UJERk2hu"
+    signing_salt: "8x9qNYjV"
 
-  plug ElixirBackend.Router
+  plug ElixirBackendWeb.Router
+
+  @doc """
+  Callback invoked for dynamically configuring the endpoint.
+
+  It receives the endpoint configuration and checks if
+  configuration should be loaded from the system environment.
+  """
+  def init(_key, config) do
+    if config[:load_from_system_env] do
+      port = System.get_env("PORT") || raise "expected the PORT environment variable to be set"
+      {:ok, Keyword.put(config, :http, [:inet6, port: port])}
+    else
+      {:ok, config}
+    end
+  end
 end
