@@ -19,6 +19,7 @@ services:
             dockerfile: Dockerfile
         depends_on:
             - elixir-mysql
+            - elixir-pma
         environment:
             MIX_ENV: dev
             PORT: $BACKEND_PORT
@@ -66,6 +67,21 @@ services:
             elixir-net:
                 ipv4_address: 172.60.1.13
         command: '--sql-mode= --server-id=1 --log-bin=mysql-bin --expire_logs_days=3 ${MYSQL_CMD_ARGS}'
+    elixir-pma:
+        container_name: elixir-pma
+        image: 'phpmyadmin/phpmyadmin'
+        restart: always
+        depends_on:
+        - elixir-mysql
+        environment:
+            MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
+            MYSQL_USER: $MYSQL_USER
+            MYSQL_PASSWORD: $MYSQL_PASSWORD
+            PMA_HOST: elixir-mysql  
+            PMA_PORT: $MYSQL_PORT
+        networks:
+            elixir-net:
+                ipv4_address: 172.60.1.14
 networks:
     elixir-net:
         ipam:
