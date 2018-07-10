@@ -10,7 +10,7 @@ mix phx.new elixir_backend --no-brunch --no-html --database mysql
 
 * Config DB settings.
 * Create the DB -  `mix ecto.create`
-* Generate Users' related code - `mix phx.gen.json Users User users name:string surname:string`
+* Generate Users' related code - `mix phx.gen.json Account User users name:string surname:string`
 * Generate Posts' related code - `mix phx.gen.json Blog Post posts title:string user_id:integer`
 
 -------------------
