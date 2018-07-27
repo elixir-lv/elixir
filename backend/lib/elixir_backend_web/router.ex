@@ -5,7 +5,7 @@ defmodule ElixirBackendWeb.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/api", ElixirBackendWeb do
+  scope "/", ElixirBackendWeb do
     pipe_through :api
 
     resources "/users", UserController, except: [:new, :edit]
