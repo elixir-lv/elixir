@@ -1,9 +1,9 @@
-defmodule ElixirBackend.Mixfile do
+defmodule Backend.Mixfile do
   use Mix.Project
 
   def project do
     [
-      app: :elixir_backend,
+      app: :backend,
       version: "0.0.1",
       elixir: "~> 1.4",
       elixirc_paths: elixirc_paths(Mix.env),
@@ -19,7 +19,7 @@ defmodule ElixirBackend.Mixfile do
   # Type `mix help compile.app` for more information.
   def application do
     [
-      mod: {ElixirBackend.Application, []},
+      mod: {Backend.Application, []},
       extra_applications: [:logger, :runtime_tools]
     ]
   end
@@ -33,7 +33,7 @@ defmodule ElixirBackend.Mixfile do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "~> 1.3.3"},
+      {:phoenix, "~> 1.3.4"},
       {:phoenix_pubsub, "~> 1.0"},
       {:phoenix_ecto, "~> 3.2"},
       {:mariaex, ">= 0.0.0"},

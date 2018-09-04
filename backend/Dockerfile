@@ -4,7 +4,7 @@ FROM elixir:latest
 
 # Install debian packages
 RUN apt-get clean && apt-get -y update && apt-get install -y locales && locale-gen en_US.UTF-8
-RUN apt-get install --yes build-essential inotify-tools cron nano mc htop
+RUN apt-get install --yes build-essential inotify-tools cron nano mc htop curl nginx iputils-ping
 
 # Install Phoenix packages
 RUN mix local.hex --force
@@ -14,7 +14,7 @@ RUN mix archive.install --force https://github.com/phoenixframework/archives/raw
 # Install node
 RUN curl -sL https://deb.nodesource.com/setup_8.x -o nodesource_setup.sh
 RUN bash nodesource_setup.sh
-RUN apt-get install nodejs
+RUN apt-get -y install nodejs
 
 # Add crontab file in the cron directory
 ADD crontab /app/crontab
@@ -30,4 +30,9 @@ RUN service cron start
 
 WORKDIR /app
 EXPOSE 4000
+
+## First time.
+# CMD tail -f /dev/null
+
+## Next time.
 CMD ["./run.sh"]

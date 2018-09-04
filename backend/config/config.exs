@@ -6,15 +6,15 @@
 use Mix.Config
 
 # General application configuration
-config :elixir_backend,
-  ecto_repos: [ElixirBackend.Repo]
+config :backend,
+  ecto_repos: [Backend.Repo]
 
 # Configures the endpoint
-config :elixir_backend, ElixirBackendWeb.Endpoint,
+config :backend, BackendWeb.Endpoint,
   url: [host: "localhost"],
-  secret_key_base: "ygnxdR6TrDjydDzNnk1/KsWmswz/STUnzPy7qBLDhiu0jc++0EEPo8fWdTiALC9V",
-  render_errors: [view: ElixirBackendWeb.ErrorView, accepts: ~w(json)],
-  pubsub: [name: ElixirBackend.PubSub,
+  secret_key_base: "dLw5JFdRL/0tHoDFbk0383rHY96sp6HFR6iXZIvowLwo8LugrUPidYpM0VlRUbFL",
+  render_errors: [view: BackendWeb.ErrorView, accepts: ~w(json)],
+  pubsub: [name: Backend.PubSub,
            adapter: Phoenix.PubSub.PG2]
 
 # Configures Elixir's Logger
