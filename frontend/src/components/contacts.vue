@@ -18,11 +18,6 @@
 							<img :alt=contacts.title :src=contacts.img>
 						</div>
 					</div>
-					<div class="row rating">
-						<!--						<div class="col" v-while="$i < contacts.rating">
-													<a href="javascript:;"><img alt="star" src="ui/img/star.png"></a>
-												</div>-->
-					</div>
 					<div class="row text">
 						<div class="col">
 							{{contacts.text}}
