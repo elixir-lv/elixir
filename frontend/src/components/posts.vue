@@ -61,6 +61,11 @@
 					{uri: 'post-1', img: '', title: 'Post 1', rating: 5},
 					{uri: 'post-2', img: '', title: 'Post 2', rating: 2}
 				];
+				this.total_page_cnt = 2;
+				this.categories = [
+					{uri: 'cat-1', img: '', title: 'cat 1', rating: 5},
+					{uri: 'cat-2', img: '', title: 'cat 2', rating: 2}
+				];
 				return true;
 
 				this.get('posts').then(
