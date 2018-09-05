@@ -6,5 +6,5 @@
 <script>
 import defaultLayout from '../layouts/Default.vue';
 import posts from '../components/posts.vue';
-export default {name: 'Posts',  components: {defaultLayout, posts}}
+export default {name: 'PostsPage',  components: {defaultLayout, posts}}
 </script>

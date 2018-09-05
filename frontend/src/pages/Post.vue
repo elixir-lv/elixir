@@ -1,9 +1,10 @@
 <template>
 	<default-layout>
-		<div>Hey, Home</div>
+		<post></post>
 	</default-layout>
 </template>
 <script>
 import defaultLayout from '../layouts/Default.vue';
-export default {name: 'HomePage',  components: {defaultLayout}}
+import post from '../components/post.vue';
+export default {name: 'PostPage',  components: {defaultLayout, post}}
 </script>

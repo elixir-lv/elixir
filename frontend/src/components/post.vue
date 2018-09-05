@@ -5,19 +5,26 @@
       <div v-if=alerts.error class="row"><div class="col"><div class="alert errorr">{{alerts.error}}</div></div></div>
     </div>
 
-    <div class="row content posts">
+    <div class="row content post">
 			<div class="row header">
-				<div class="col">
-					<ul v-for="category in categories">
-						<li><a :href="loading ? 'javascript:;' : category.url">{{category.title}}</a></li>
+				<div class="breadcrumbs col">
+					<ul>
+						<li><a href="">Home</a> <span class="breadcrump-seperator">></span></li>
+						<li><a href="/posts">Category 1</a> <span class="breadcrump-seperator">></span></li>
+						<li>Post 1</li>
 					</ul>
 				</div>
 			</div>
 			<div class="row body">
-				<div class="col s4" v-for="post in posts">
+				<div class="col">
+					<div class="row title">
+						<div class="col">
+							<h1>{{post.title}}</h1>
+						</div>
+					</div>
 					<div class="row thumbnail">
 						<div class="col">
-							<a :href="loading ? 'javascript:;' : 'posts/' + post.uri" ><img :alt=post.title :src=post.img></a>
+							<img :alt=post.title :src=post.img>
 						</div>
 					</div>
 					<div class="row rating">
@@ -25,17 +32,16 @@
 													<a href="javascript:;"><img alt="star" src="ui/img/star.png"></a>
 												</div>-->
 					</div>
-				</div>
-			</div>
-			<div class="row footer">
-				<div class="col">
-					<ul class="pager" v-if="total_page_cnt">
-						<li><a href="javascript:;">Previous</a></li>
-						<!--							<template v-while="$i < total_page_cnt + 1">
-														<li><a :href=i>{{i}}</a></li>
-													</template>-->
-						<li><a href="javascript:;">Next</a></li>
-					</ul>
+					<div class="row text">
+						<div class="col">
+							{{post.text}}
+						</div>
+					</div>
+					<div class="row share">
+						<div class="col">
+							<a href="javascript:;">Share</a>
+						</div>
+					</div>
 				</div>
 			</div>
     </div>
@@ -45,31 +51,23 @@
 
 	export default {
 		data() {
-			return {loading: true, alerts: {success: '', error: ''},
-				posts: [], categories: [], total_page_cnt: 0}
+			return {loading: true, alerts: {success: '', error: ''}, id: 0, post: {}}
 		},
 		created() {
-			this.getPosts();
+			this.getPost();
 		},
 		methods: {
-			getPosts: function () {
+			getPost: function () {
 				this.clearAlerts();
 				this.loading = true;
 
 				// TODO: Replace this with a real API call.
-				this.posts = [
-					{uri: 'post-1', img: '', title: 'Post 1', rating: 5},
-					{uri: 'post-2', img: '', title: 'Post 2', rating: 2}
-				];
-				this.total_page_cnt = 2;
-				this.categories = [
-					{uri: 'cat-1', img: '', title: 'cat 1', rating: 5},
-					{uri: 'cat-2', img: '', title: 'cat 2', rating: 2}
-				];
+				this.post = {uri: 'post-1', img: '', title: 'Post 1', rating: 2, text: 'Lorem ipsum post 1'};
 				this.loading = false;
 				return true;
-				this.get('posts').then(function (response) {
-					this.posts = response.data.data;
+
+				this.get('posts/' + this.id).then(function (response) {
+					this.post = response.data.data;
 					this.loading = false
 				}, function () {
 					this.showError(response.data.error)
