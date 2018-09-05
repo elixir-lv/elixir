@@ -1,0 +1,94 @@
+<template>
+  <div>
+    <div class="row alerts">
+      <div v-if=alerts.success class="row"><div class="col"><div class="alert success">{{alerts.success}}</div></div></div>
+      <div v-if=alerts.error class="row"><div class="col"><div class="alert errorr">{{alerts.error}}</div></div></div>
+    </div>
+
+    <div class="row content posts">
+			<div class="row header">
+				<div class="col">
+					<ul v-for="category in categories">
+						<li><a :href="loading ? 'javascript:;' : category.url">{{category.title}}</a></li>
+					</ul>
+				</div>
+			</div>
+			<div class="row body">
+				<div class="col s4" v-for="post in posts">
+					<div class="row thumbnail">
+						<div class="col">
+							<a :href="loading ? 'javascript:;' : 'posts/' + post.url" ><img :alt=post.title :src=post.img></a>
+						</div>
+					</div>
+					<div class="row rating">
+						<!--						<div class="col" v-while="$i < post.rating">
+													<a href="javascript:;"><img alt="star" src="ui/img/star.png"></a>
+												</div>-->
+					</div>
+				</div>
+			</div>
+			<div class="row footer">
+				<div class="col">
+					<ul class="pager" v-if="total_page_cnt">
+						<li><a href="javascript:;">Previous</a></li>
+						<!--							<template v-while="$i < total_page_cnt + 1">
+														<li><a :href=i>{{i}}</a></li>
+													</template>-->
+						<li><a href="javascript:;">Next</a></li>
+					</ul>
+				</div>
+			</div>
+    </div>
+  </div>
+</template>
+<script>
+
+	export default {
+		data() {
+			return {loading: true, alerts: {success: '', error: ''},
+				posts: [], categories: [], total_page_cnt: 0}
+		},
+		created() {
+			this.getPosts();
+		},
+		methods: {
+			getPosts: function () {
+				this.clearAlerts();
+				this.loading = true;
+
+				// TODO: Replace this with a real API call.
+				this.posts = [
+					{uri: 'post-1', img: '', title: 'Post 1', rating: 5},
+					{uri: 'post-2', img: '', title: 'Post 2', rating: 2}
+				];
+				return true;
+
+				this.get('posts').then(
+								function (response) {
+									this.posts = response.data.data;
+									this.loading = false
+								}, function () {
+					this.showError(response.data.error)
+				}
+				);
+			},
+			clearAlerts: function () {
+				this.alerts.success = '', this.alerts.error = ''
+			},
+			showSuccess: function (success = "Saved!") {
+				this.alerts.success = this.getTranslatedMessage(success);
+				this.loading = false
+			},
+			showError: function (error = "Sorry, but there's a problem.") {
+				this.alerts.error = this.getTranslatedMessage(error);
+				this.loading = false
+			},
+			getTranslatedMessage: function (messageKey) {
+				return this.doesTranslationExist(messageKey) ? window.translations[messageKey] : messageKey
+			},
+			doesTranslationExist(messageKey) {
+				return messageKey && typeof window.translations[messageKey] != "undefined" && window.translations[messageKey] != null
+			}
+		}
+	}
+</script>
