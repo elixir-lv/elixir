@@ -1,3 +1,8 @@
 <template>
-  <div><h1>Hi, Vue</h1></div>
+  <div id="app">
+    <router-view class="view"></router-view>
+  </div>
 </template>
+<script>
+	export default {name: 'app'}
+</script>

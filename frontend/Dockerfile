@@ -15,6 +15,7 @@ RUN apt-get install -y nodejs
 
 # [Fix  `open() "/run/nginx.pid" failed (2: No such file or directory)`](https://github.com/gliderlabs/docker-alpine/issues/185#issuecomment-246595114)
 RUN mkdir -p /run/nginx
+RUN ln -s /var/www/build/nginx/site.conf /etc/nginx/sites-enabled/site.conf
 
 WORKDIR /var/www
 
