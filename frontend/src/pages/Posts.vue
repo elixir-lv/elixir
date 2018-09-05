@@ -1,9 +1,9 @@
 <template>
 	<default-layout>
-		<div>Hey, Home</div>
+		<div>Hey, Posts</div>
 	</default-layout>
 </template>
 <script>
 import defaultLayout from '../layouts/Default.vue';
-export default {name: 'Home',  components: {defaultLayout}}
+export default {name: 'Posts',  components: {defaultLayout}}
 </script>
