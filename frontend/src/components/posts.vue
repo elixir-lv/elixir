@@ -42,7 +42,6 @@
   </div>
 </template>
 <script>
-
 	export default {
 		data() {
 			return {loading: true, alerts: {success: '', error: ''},

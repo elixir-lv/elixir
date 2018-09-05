@@ -4,6 +4,6 @@
 	</default-layout>
 </template>
 <script>
-import defaultLayout from '../layouts/Default.vue';
-export default {name: 'HomePage',  components: {defaultLayout}}
+	import defaultLayout from '../layouts/Default.vue';
+	export default {name: 'HomePage', components: {defaultLayout}}
 </script>

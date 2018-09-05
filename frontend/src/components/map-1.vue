@@ -5,36 +5,27 @@
       <div v-if=alerts.error class="row"><div class="col"><div class="alert errorr">{{alerts.error}}</div></div></div>
     </div>
 
-    <div class="row content post">
-			<div class="row header">
-				<div class="breadcrumbs col">
-					<ul>
-						<li><a href="">Home</a> <span class="breadcrump-seperator">></span></li>
-						<li><a href="/posts">Category 1</a> <span class="breadcrump-seperator">></span></li>
-						<li>Post 1</li>
-					</ul>
-				</div>
-			</div>
+    <div class="row content map">
 			<div class="row body">
 				<div class="col">
 					<div class="row title">
 						<div class="col">
-							<h1>{{post.title}}</h1>
+							<h1>{{map.title}}</h1>
 						</div>
 					</div>
 					<div class="row thumbnail">
 						<div class="col">
-							<img :alt=post.title :src=post.img>
+							<img :alt=map.title :src=map.img>
 						</div>
 					</div>
 					<div class="row rating">
-						<!--						<div class="col" v-while="$i < post.rating">
+						<!--						<div class="col" v-while="$i < map.rating">
 													<a href="javascript:;"><img alt="star" src="ui/img/star.png"></a>
 												</div>-->
 					</div>
 					<div class="row text">
 						<div class="col">
-							{{post.text}}
+							{{map.text}}
 						</div>
 					</div>
 					<div class="row share">
@@ -50,23 +41,23 @@
 <script>
 	export default {
 		data() {
-			return {loading: true, alerts: {success: '', error: ''}, id: 0, post: {}}
+			return {loading: true, alerts: {success: '', error: ''}, map: {}}
 		},
 		created() {
-			this.getPost();
+			this.getMap();
 		},
 		methods: {
-			getPost: function () {
+			getMap: function () {
 				this.clearAlerts();
 				this.loading = true;
 
 				// TODO: Replace this with a real API call.
-				this.post = {uri: 'post-1', img: '', title: 'Post 1', rating: 2, text: 'Lorem ipsum post 1'};
+				this.map = {uri: 'map-1', img: '', title: 'Map 1', rating: 2, text: 'Lorem ipsum map 1'};
 				this.loading = false;
 				return true;
 
-				this.get('posts/' + this.id).then(function (response) {
-					this.post = response.data.data;
+				this.get('maps/' + this.id).then(function (response) {
+					this.map = response.data.data;
 					this.loading = false
 				}, function () {
 					this.showError(response.data.error)

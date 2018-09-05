@@ -1,10 +1,10 @@
 <template>
 	<default-layout>
-		<post></post>
+		<map-1></map-1>
 	</default-layout>
 </template>
 <script>
 	import defaultLayout from '../layouts/Default.vue';
-	import post from '../components/post.vue';
-	export default {name: 'PostPage', components: {defaultLayout, post}}
+	import map1 from '../components/map-1.vue';
+	export default {components: {defaultLayout, map1}}
 </script>
