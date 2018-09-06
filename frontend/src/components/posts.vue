@@ -54,6 +54,11 @@
 			getPosts: function () {
 				this.clearAlerts();
 				this.loading = true;
+				
+				this.$http.get('/posts').then(
+								function(response){console.log('ok', response)},
+								function(response){console.log('NOok', response)}
+				);
 
 				// TODO: Replace this with a real API call.
 				this.posts = [
