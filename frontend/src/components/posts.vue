@@ -72,7 +72,7 @@
 				];
 //				this.loading = false;
 //				return true;
-				this.$http.get('http://api.elixir.local:4000/api/posts').then(function (response) {
+				this.$http.get('posts').then(function (response) {
 					console.log(response.data
 									)	
 					this.posts = response.data.data;

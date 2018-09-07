@@ -4,5 +4,5 @@ import App from './App.vue';
 import VueResource from "vue-resource";
 Vue.use(VueResource);
 
-Vue.options.http.root = 'http://api.elixir.local';
-new Vue(router, render: h => h(App)}).$mount("#app");
+Vue.http.options.root = 'http://api.elixir.local:4000/api/';
+new Vue({router, render: h => h(App)}).$mount("#app");
