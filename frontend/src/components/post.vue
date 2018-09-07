@@ -60,12 +60,12 @@
 				this.clearAlerts();
 				this.loading = true;
 
-				// TODO: Replace this with a real API call.
-				this.post = {uri: 'post-1', img: '', title: 'Post 1', rating: 2, text: 'Lorem ipsum post 1'};
-				this.loading = false;
-				return true;
+//				// TODO: Replace this with a real API call.
+//				this.post = {uri: 'post-1', img: '', title: 'Post 1', rating: 2, text: 'Lorem ipsum post 1'};
+//				this.loading = false;
+//				return true;
 
-				this.get('posts/' + this.id).then(function (response) {
+				this.$http.get('http://api.elixir.local:4000/api/posts/' + this.id).then(function (response) {
 					this.post = response.data.data;
 					this.loading = false
 				}, function () {

@@ -5,8 +5,10 @@ defmodule Backend.Blog.Post do
 
   schema "posts" do
     field :title, :string
-		field :url, :string
+		field :uri, :string
 		field :img, :string
+		field :rating, :string
+		field :text, :string
 
     timestamps()
   end
@@ -14,7 +16,7 @@ defmodule Backend.Blog.Post do
   @doc false
   def changeset(post, attrs) do
     post
-    |> cast(attrs, [:title])
-    |> validate_required([:title])
+    |> cast(attrs, [:title, :uri, :img, :rating, :text])
+    |> validate_required([:title, :uri, :img, :rating, :text])
   end
 end
