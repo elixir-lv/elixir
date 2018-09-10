@@ -1,17 +1,10 @@
-## Posts endpoint
+# Posts
 
-* Add mockup for posts.vue
-* Start webpack, should compile vue.
+## URI
 
-```shell
-docker exec -it elixir-frontend bash
-npm build
-```
+* Gen from the title, if not passed.
+* If such URI already exist, then append an incremented integer.
 
+## Appearance
 
-### Front
-* http://elixir.local/posts.html
-
-## Later
-* add favicon.
-* Front-end: Add optimized nginx conf.
+* Add a very basic grid system so we could arrange elements using rows and columns.
