@@ -7,7 +7,7 @@ defmodule Backend.Repo.Migrations.CreatePosts do
 			`title` VARCHAR(250) NOT NULL,
 			`uri` VARCHAR(250) NOT NULL,
 			`img` VARCHAR(250) NULL,
-			`rating` ENUM('', '1', '2' ,'3' ,'4', '5') DEFAULT '',
+			`rating` TINYINT(1) DEFAULT 0 NOT NULL,
 			`text` VARCHAR(2000) NULL DEFAULT NULL,
 			`inserted_at` DATETIME NULL DEFAULT NULL,
 			`updated_at` DATETIME NULL DEFAULT NULL,
