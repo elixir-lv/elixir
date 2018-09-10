@@ -2,6 +2,7 @@ defmodule BackendWeb.Router do
   use BackendWeb, :router
 
   pipeline :api do
+		plug CORSPlug, origin: ["http://elixir.local"]
     plug :accepts, ["json"]
   end
 
