@@ -18,6 +18,4 @@ RUN mkdir -p /run/nginx
 RUN ln -s /var/www/build/nginx/site.conf /etc/nginx/sites-enabled/site.conf
 
 WORKDIR /var/www
-
-# Keep alive.
-CMD service nginx start && tail -F /var/log/nginx/error.log
+CMD ["./run.sh"]
