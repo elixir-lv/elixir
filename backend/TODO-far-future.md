@@ -1,3 +1,6 @@
+* Handle [ENUMs as Integers](https://stackoverflow.com/a/113648) because it is better indexed for a fixed (and small) amount of integers.
+Currently have problems returning values that are strings, but defined as :integer. Saving is fine.
+
 # Far future TODO
 
 ## Add integration with different storate engines

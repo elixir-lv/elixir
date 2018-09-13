@@ -21,7 +21,7 @@
 						</div>
 					</div>
 					<div class="row rating">
-						<div class="col" v-for="i in 5">
+						<div class="col" v-for="i in post.rating">
 							<a href="javascript:;"><img alt="star" src="ui/img/star.png"></a>
 						</div>
 					</div>
@@ -54,31 +54,15 @@
 			getPosts: function () {
 				this.clearAlerts();
 				this.loading = true;
-//				
-//				this.$http.get('/posts').then(
-//								function(response){console.log('ok', response)},
-//								function(response){console.log('NOok', response)}
-//				);
-//
-//				// TODO: Replace this with a real API call.
-//				this.posts = [
-//					{uri: 'post-1', img: '', title: 'Post 1', rating: 5},
-//					{uri: 'post-2', img: '', title: 'Post 2', rating: 2}
-//				];
 				this.total_page_cnt = 2;
 				this.categories = [
 					{uri: 'cat-1', img: '', title: 'cat 1', rating: 5},
 					{uri: 'cat-2', img: '', title: 'cat 2', rating: 2}
 				];
-//				this.loading = false;
-//				return true;
 				this.$http.get('posts').then(function (response) {
-					console.log(response.data
-									)	
 					this.posts = response.data.data;
-					this.loading = false
+					this.loading = false;
 				}, function () {
-					console.log(response, 'sss')
 					this.showError(response.data.error)
 				});
 			},
