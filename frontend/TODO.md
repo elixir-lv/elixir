@@ -2,7 +2,11 @@
 
 ## main.css
 
-* Set min-height, padding, bg color for the content.
+### Arrange links
+
+* Remove circles.
+* Distinct items by borders or color.
+* Position - center if necessary.
 
 ## Other
 

@@ -10,3 +10,8 @@
 .width-150{
 	width: 150px;
 }
+.body{
+	min-height: 450px;
+	background: lightgray;
+	padding: 25px;
+}

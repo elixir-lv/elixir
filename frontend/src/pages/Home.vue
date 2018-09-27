@@ -1,6 +1,10 @@
 <template>
 	<default-layout>
-		<div>Hey, Home</div>
+		<div class="row body">
+			<div class="col-sm-12">
+				Hey, Home
+			</div>
+		</div>
 	</default-layout>
 </template>
 <script>

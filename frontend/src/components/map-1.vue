@@ -1,30 +1,30 @@
 <template>
   <div>
     <div class="row alerts">
-      <div v-if=alerts.success class="row"><div class="col"><div class="alert success">{{alerts.success}}</div></div></div>
-      <div v-if=alerts.error class="row"><div class="col"><div class="alert errorr">{{alerts.error}}</div></div></div>
+      <div v-if=alerts.success class="row"><div class="col-sm-12"><div class="alert success">{{alerts.success}}</div></div></div>
+      <div v-if=alerts.error class="row"><div class="col-sm-12"><div class="alert errorr">{{alerts.error}}</div></div></div>
     </div>
 
     <div class="row content map">
 			<div class="row body">
-				<div class="col">
+				<div class="col-sm-12">
 					<div class="row title">
-						<div class="col">
+						<div class="col-sm-12">
 							<h1>{{map.title}}</h1>
 						</div>
 					</div>
 					<div class="row thumbnail">
-						<div class="col">
+						<div class="col-sm-12">
 							<img :alt=map.title :src=map.img>
 						</div>
 					</div>
 					<div class="row text">
-						<div class="col">
+						<div class="col-sm-12">
 							{{map.text}}
 						</div>
 					</div>
 					<div class="row share">
-						<div class="col">
+						<div class="col-sm-12">
 							<a href="javascript:;">Share</a>
 						</div>
 					</div>
