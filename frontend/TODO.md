@@ -2,7 +2,7 @@
 
 ## main.css
 
-* class items (links) oriented in horizontal direction.
+* Set min-height, padding, bg color for the content.
 
 ## Other
 
