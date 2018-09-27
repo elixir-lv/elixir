@@ -5,28 +5,26 @@
       <div v-if=alerts.error class="row"><div class="col-sm-12"><div class="alert errorr">{{alerts.error}}</div></div></div>
     </div>
 
-    <div class="row content graphs">
-			<div class="row body">
-				<div class="col-sm-12">
-					<div class="row title">
-						<div class="col-sm-12">
-							<h1>{{graphs.title}}</h1>
-						</div>
+		<div class="row body graphs">
+			<div class="col-sm-12">
+				<div class="row title">
+					<div class="col-sm-12">
+						<h1>{{graphs.title}}</h1>
 					</div>
-					<div class="row thumbnail">
-						<div class="col-sm-12">
-							<img :alt=graphs.title :src=graphs.img>
-						</div>
+				</div>
+				<div class="row thumbnail">
+					<div class="col-sm-12">
+						<img :alt=graphs.title :src=graphs.img>
 					</div>
-					<div class="row text">
-						<div class="col-sm-12">
-							{{graphs.text}}
-						</div>
+				</div>
+				<div class="row text">
+					<div class="col-sm-12">
+						{{graphs.text}}
 					</div>
-					<div class="row share">
-						<div class="col-sm-12">
-							<a href="javascript:;">Share</a>
-						</div>
+				</div>
+				<div class="row share">
+					<div class="col-sm-12">
+						<a href="javascript:;">Share</a>
 					</div>
 				</div>
 			</div>

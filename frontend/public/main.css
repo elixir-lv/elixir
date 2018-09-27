@@ -15,3 +15,6 @@
 	background: lightgray;
 	padding: 25px;
 }
+.no-bullet{
+	list-style: none;
+}

@@ -9,9 +9,9 @@
 			<div class="row header">
 				<div class="breadcrumbs col">
 					<ul>
-						<li class="horizontal width-150"><a href="">Home</a> <span class="breadcrump-seperator">></span></li>
-						<li class="horizontal width-150"><a href="/posts">Category 1</a> <span class="breadcrump-seperator">></span></li>
-						<li class="horizontal width-150">Post 1</li>
+						<li class="horizontal no-bullet width-150"><a href="">Home</a> <span class="breadcrump-seperator">></span></li>
+						<li class="horizontal no-bullet width-150"><a href="/posts">Category 1</a> <span class="breadcrump-seperator">></span></li>
+						<li class="horizontal no-bullet width-150">Post 1</li>
 					</ul>
 				</div>
 			</div>
@@ -30,7 +30,7 @@
 					<div class="row rating">
 						<div class="col-sm-12">
 							<ul v-for="i in post.rating">
-								<li class="horizontal width-50"><img alt="star" src="ui/img/star.png"></li>
+								<li class="horizontal no-bullet width-50"><img alt="star" src="ui/img/star.png"></li>
 							</ul>
 						</div>
 					</div>
