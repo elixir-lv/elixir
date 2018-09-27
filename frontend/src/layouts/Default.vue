@@ -1,25 +1,36 @@
 <template>
   <div>
 		<div class="row header">
-			<div class="col logo">
+			<div class="row">
+				<div class="col-sm-3 logo">
 					<a href="/">Home</a>
-			</div>
-			<div class="col-sm-9 link-menu ">
-				<ul>
-						<li><a href="/posts">Posts</a></li>
-						<li><a href="/contacts">Contacts</a></li>
-						<li><a href="/map">Item in a map</a></li>
-						<li><a href="/graphs">Graphs</a></li>
-				</ul>
-			</div>
-			<div class="col-sm-3 right search">
+				</div>
+				<div class="col-sm-6"></div>
+				<div class="col-sm-3 search">
 					<form>
-							<input class="search-input" type="text" placeholder="Seach...">
-							<button type="submit">Search</button>
+						<div class="row">
+							<div class="col-sm-6">
+								<input class="search-input" type="text" placeholder="Seach...">
+							</div>
+							<div class="col-sm-3">
+								<button type="submit">Search</button>
+							</div>
+						</div>
 					</form>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-12 link-menu">
+					<ul>
+						<li class="horizontal width-150"><a class href="/posts">Posts</a></li>
+						<li class="horizontal width-150"><a href="/contacts">Contacts</a></li>
+						<li class="horizontal width-150"><a href="/map">Item in a map</a></li>
+						<li class="horizontal width-150"><a href="/graphs">Graphs</a></li>
+					</ul>
+				</div>
 			</div>
 		</div>
-		
+
 		<slot></slot>
   </div>
 </template>
