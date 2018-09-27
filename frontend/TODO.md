@@ -1,4 +1,11 @@
 # Front-end TODO
+
+## main.css
+
+* class items (links) oriented in horizontal direction.
+
+## Other
+
 * Add a Vuex class permissions and a global method `show('posts')` that will be a shorthand for `permissions.must_show('posts')`.
 * Replace the static content with a data from the API.
 * Move the whole html to vue - like <head>. This will allow to affect tags like title.

@@ -7,14 +7,14 @@
 
     <div class="row content posts">
 			<div class="row header">
-				<div class="col">
+				<div class="col-sm-12">
 					<ul v-for="category in categories">
 						<li><a :href="loading ? 'javascript:;' : category.url">{{category.title}}</a></li>
 					</ul>
 				</div>
 			</div>
 			<div class="row body">
-				<div class="col s4" v-for="post in posts">
+				<div class="col-sm-4" v-for="post in posts">
 					<div class="row thumbnail">
 						<div class="col">
 							<a :href="loading ? 'javascript:;' : 'posts/' + post.uri" ><img :alt=post.title :src=post.img></a>
@@ -28,7 +28,7 @@
 				</div>
 			</div>
 			<div class="row footer">
-				<div class="col">
+				<div class="col-sm-6">
 					<ul class="pager" v-if="total_page_cnt">
 						<li><a href="javascript:;">Previous</a></li>
 						<template v-for="i in total_page_cnt + 1">

@@ -1,10 +1,10 @@
 <template>
   <div>
 		<div class="row header">
-			<div class="col s3 logo">
+			<div class="col logo">
 					<a href="/">Home</a>
 			</div>
-			<div class="col s6 link-menu ">
+			<div class="col-sm-9 link-menu ">
 				<ul>
 						<li><a href="/posts">Posts</a></li>
 						<li><a href="/contacts">Contacts</a></li>
@@ -12,7 +12,7 @@
 						<li><a href="/graphs">Graphs</a></li>
 				</ul>
 			</div>
-			<div class="col s3 right search">
+			<div class="col-sm-3 right search">
 					<form>
 							<input class="search-input" type="text" placeholder="Seach...">
 							<button type="submit">Search</button>
