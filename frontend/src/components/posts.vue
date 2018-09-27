@@ -29,16 +29,33 @@
 					</div>
 				</div>
 			</div>
-			<div class="row footer">
+			
+			<div class="row footer pager" v-if="total_page_cnt">
+				<div class="col-sm-3"></div>
 				<div class="col-sm-6">
-					<ul class="pager" v-if="total_page_cnt">
-						<li class="horizontal no-bullet width-100"><a href="javascript:;">Previous</a></li>
-						<template v-for="i in total_page_cnt + 1">
-							<li class="horizontal no-bullet width-50"><a :href=i>{{i}}</a></li>
-						</template>
-						<li class="horizontal no-bullet width-100"><a href="javascript:;">Next</a></li>
-					</ul>
+					<div class="row">
+						<div class="col-sm-3">
+								<a href="javascript:;"><-</a>
+						</div>
+						<div class="col-sm-6">
+							<div class="row">
+								<div class="col-sm-4">
+									<a href="javascript:;">1</a>
+								</div>
+								<div class="col-sm-4 txt-center">
+									<a href="javascript:;">2</a>
+								</div>
+								<div class="col-sm-4 txt-right">
+									<a href="javascript:;">3</a>
+								</div>
+							</div>
+						</div>
+						<div class="col-sm-3 txt-right">
+							<a href="javascript:;">-></a>
+						</div>
+					</div>
 				</div>
+				<div class="col-sm-3"></div>
 			</div>
     </div>
   </div>
