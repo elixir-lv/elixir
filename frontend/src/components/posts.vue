@@ -9,20 +9,22 @@
 			<div class="row header">
 				<div class="col-sm-12">
 					<ul v-for="category in categories">
-						<li><a :href="loading ? 'javascript:;' : category.url">{{category.title}}</a></li>
+						<li class="horizontal width-150"><a :href="loading ? 'javascript:;' : category.url">{{category.title}}</a></li>
 					</ul>
 				</div>
 			</div>
 			<div class="row body">
 				<div class="col-sm-4" v-for="post in posts">
 					<div class="row thumbnail">
-						<div class="col">
+						<div class="col-sm-12">
 							<a :href="loading ? 'javascript:;' : 'posts/' + post.uri" ><img :alt=post.title :src=post.img></a>
 						</div>
 					</div>
 					<div class="row rating">
-						<div class="col" v-for="i in post.rating">
-							<a href="javascript:;"><img alt="star" src="ui/img/star.png"></a>
+						<div class="col-sm-12">
+							<ul v-for="i in post.rating">
+								<li class="horizontal width-50"><img alt="star" src="ui/img/star.png"></li>
+							</ul>
 						</div>
 					</div>
 				</div>
@@ -30,11 +32,11 @@
 			<div class="row footer">
 				<div class="col-sm-6">
 					<ul class="pager" v-if="total_page_cnt">
-						<li><a href="javascript:;">Previous</a></li>
+						<li class="horizontal width-100"><a href="javascript:;">Previous</a></li>
 						<template v-for="i in total_page_cnt + 1">
-							<li><a :href=i>{{i}}</a></li>
+							<li class="horizontal width-50"><a :href=i>{{i}}</a></li>
 						</template>
-						<li><a href="javascript:;">Next</a></li>
+						<li class="horizontal width-100"><a href="javascript:;">Next</a></li>
 					</ul>
 				</div>
 			</div>
