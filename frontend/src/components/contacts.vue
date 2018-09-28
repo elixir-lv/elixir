@@ -25,7 +25,7 @@
 					</div>
 					<div class="row share">
 						<div class="col-sm-12">
-							<a href="javascript:;">Share</a>
+							<a href="javascript:;"><img width="30" alt="share" src="/ui/img/share.png"></a>
 						</div>
 					</div>
 				</div>
@@ -39,15 +39,15 @@
 			return {loading: true, alerts: {success: '', error: ''}, contacts: {}}
 		},
 		created() {
-			this.getMap();
+			this.getContacts();
 		},
 		methods: {
-			getMap: function () {
+			getContacts: function () {
 				this.clearAlerts();
 				this.loading = true;
 
 				// TODO: Replace this with a real API call.
-				this.contacts = {uri: 'contacts-1', img: '', title: 'Contacts 1', rating: 2, text: 'Lorem ipsum contacts 1'};
+				this.contacts = {uri: 'contacts-1', img:'/ui/img/logo-placeholder.jpg', title: 'Contacts 1', rating: 2, text: 'Lorem ipsum contacts 1'};
 				this.loading = false;
 				return true;
 

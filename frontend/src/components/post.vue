@@ -6,13 +6,17 @@
     </div>
 
     <div class="row content post">
-			<div class="row header">
-				<div class="breadcrumbs col">
-					<ul>
-						<li class="horizontal no-bullet width-150"><a href="">Home</a> <span class="breadcrump-seperator">></span></li>
-						<li class="horizontal no-bullet width-150"><a href="/posts">Category 1</a> <span class="breadcrump-seperator">></span></li>
-						<li class="horizontal no-bullet width-150">Post 1</li>
-					</ul>
+			<div class="row breadcrumbs">
+				<div class="col-sm-4">
+					<div class="row">
+						<div class="col-sm-3"><a href="/">Home</a></div>
+						<div class="col-sm-1">></div>
+						<div class="col-sm-3"><a href="/posts">Category 1</a></div>
+						<div class="col-sm-1">></div>
+						<div class="col-sm-3">Post 1</div>
+						<div class="col-sm-1"></div>
+					</div>
+					<div class="col-sm-8"></div>
 				</div>
 			</div>
 			<div class="row body">
@@ -41,7 +45,7 @@
 					</div>
 					<div class="row share">
 						<div class="col-sm-12">
-							<a href="javascript:;">Share</a>
+							<a href="javascript:;"><img width="30" alt="share" src="/ui/img/share.png"></a>
 						</div>
 					</div>
 				</div>

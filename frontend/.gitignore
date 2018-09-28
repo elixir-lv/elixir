@@ -1,5 +1,5 @@
 /node_modules
 /dist
-/public/dist/*
+/public/ui/js/dist/*
 /.vscode
 /nbproject/*

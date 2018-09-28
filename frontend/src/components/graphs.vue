@@ -24,7 +24,7 @@
 				</div>
 				<div class="row share">
 					<div class="col-sm-12">
-						<a href="javascript:;">Share</a>
+						<a href="javascript:;"><img width="30" alt="share" src="/ui/img/share.png"></a>
 					</div>
 				</div>
 			</div>
@@ -45,7 +45,7 @@
 				this.loading = true;
 
 				// TODO: Replace this with a real API call.
-				this.graphs = {uri: 'graphs-1', img: '', title: 'graphs 1', rating: 2, text: 'Lorem ipsum graphs 1'};
+				this.graphs = {uri: 'graphs-1', img:'/ui/img/logo-placeholder.jpg', title: 'graphs 1', rating: 2, text: 'Lorem ipsum graphs 1'};
 				this.loading = false;
 				return true;
 

@@ -3,7 +3,7 @@
 		<div class="row header">
 			<div class="row">
 				<div class="col-sm-3 logo">
-					<a href="/">Home</a>
+					<a href="/"><img alt="Home" src="/ui/img/logo-placeholder.jpg"></a>
 				</div>
 				<div class="col-sm-6"></div>
 				<div class="col-sm-3 search">
