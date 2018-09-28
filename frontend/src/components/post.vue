@@ -34,7 +34,7 @@
 					<div class="row rating">
 						<div class="col-sm-12">
 							<ul v-for="i in post.rating">
-								<li class="horizontal no-bullet width-50"><img alt="star" src="ui/img/star.png"></li>
+								<li class="float-left no-bullet width-50"><img alt="star" src="ui/img/star.png"></li>
 							</ul>
 						</div>
 					</div>
