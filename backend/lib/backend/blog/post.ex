@@ -17,6 +17,19 @@ defmodule Backend.Blog.Post do
   def changeset(post, attrs) do
     post
     |> cast(attrs, [:title, :uri, :img, :rating, :text])
+		|> getUriFromTitle()
     |> validate_required([:title, :uri])
   end
+
+  defp getUriFromTitle(changeset) do
+    title = get_change(changeset, :title)
+		uri = getUriFromString(title)
+    changeset = changeset |> put_change(:uri, uri)
+  end
+
+	def getUriFromString(nil), do: nil
+	def getUriFromString(string) do
+		Slugger.slugify(string)
+	end
+
 end

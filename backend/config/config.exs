@@ -21,6 +21,12 @@ config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:user_id]
 
+# Char used as separator between words.
+config :slugger, separator_char: ?-
+
+# Path to the file containing replacements.
+config :slugger, replacement_file: "lib/replacements.exs"
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env()}.exs"

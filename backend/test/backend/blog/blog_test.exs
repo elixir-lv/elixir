@@ -6,7 +6,7 @@ defmodule Backend.BlogTest do
   describe "posts" do
     alias Backend.Blog.Post
 
-    @valid_attrs %{title: "some title"}
+    @valid_attrs %{title: "Some title"}
     @update_attrs %{title: "some updated title"}
     @invalid_attrs %{title: nil}
 
@@ -60,6 +60,11 @@ defmodule Backend.BlogTest do
     test "change_post/1 returns a post changeset" do
       post = post_fixture()
       assert %Ecto.Changeset{} = Blog.change_post(post)
+    end
+
+		test "getUriFromString/1 test URI" do
+			assert is_nil(Post.getUriFromString(nil))
+			assert "z-e-a-C-F-A-B-V-G-D-s-or" = Post.getUriFromString("z e ā Č Ф А - Б В Г	Д š \ / * ^ % ! + ) | ")
     end
   end
 end
