@@ -1,3 +1,7 @@
+## URI
+
+* If such URI already exist, then append an incremented integer.
+
 ## Contacts
 
 * Read data from `pages` table.
@@ -6,8 +10,3 @@
 
 * Pager.
 * Categories.
-
-## URI
-
-* Gen from the title, if not passed.
-* If such URI already exist, then append an incremented integer.

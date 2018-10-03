@@ -1,3 +1,10 @@
+## Tests
+
+* Is is it possible to re-gen auto-gen tests?
+* How to tests lists, like posts?
+
+## Other
+
 * Add *.secret examples.x
 * Handle [ENUMs as Integers](https://stackoverflow.com/a/113648) because it is better indexed for a fixed (and small) amount of integers.
 Currently have problems returning values that are strings, but defined as :integer. Saving is fine.

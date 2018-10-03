@@ -3,6 +3,7 @@ defmodule Backend.Blog.Post do
   import Ecto.Changeset
 
 
+  @timestamps_opts [type: :naive_datetime, usec: false]
   schema "posts" do
     field :title, :string
 		field :uri, :string

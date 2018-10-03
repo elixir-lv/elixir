@@ -2,7 +2,7 @@ defmodule Backend.Account.User do
   use Ecto.Schema
   import Ecto.Changeset
 
-
+  @timestamps_opts [type: :naive_datetime, usec: false]
   schema "users" do
     field :email, :string
     field :name, :string
