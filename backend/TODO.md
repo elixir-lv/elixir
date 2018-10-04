@@ -1,6 +1,8 @@
-## URI
+# If such URI already exist, then append an incremented integer
 
-* If such URI already exist, then append an incremented integer.
+* Collect posts LIKE 'adaddadad%' (4char)
+* Avoid checking agianst itself.
+* changeset valid or errors
 
 ## Contacts
 
