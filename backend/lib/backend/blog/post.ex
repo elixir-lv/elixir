@@ -18,19 +18,23 @@ defmodule Backend.Blog.Post do
   def changeset(post, attrs) do
     post
     |> cast(attrs, [:title, :uri, :img, :rating, :text])
-		|> getUriFromTitle()
+		|> createUniqueUriFromTitle()
     |> validate_required([:title, :uri])
   end
 
-  defp getUriFromTitle(changeset) do
-    title = get_change(changeset, :title)
-		uri = getUriFromString(title)
-    changeset = changeset |> put_change(:uri, uri)
-  end
+	def createUniqueUriFromTitle(nil), do: nil
+	def createUniqueUriFromTitle(changeset) do
+    get_change(changeset, :title) |> createUniqueUriFromString(changeset)
+	end
+
+	def createUniqueUriFromString(string, changeset) do
+		uri = getUriFromString(string)
+    changeset |> put_change(:uri, uri)
+	end
 
 	def getUriFromString(nil), do: nil
-	def getUriFromString(string) do
-		Slugger.slugify(string)
+  def getUriFromString(string) do
+    string |> String.trim() |> Slugger.slugify()
 	end
 
 end

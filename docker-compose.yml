@@ -31,20 +31,20 @@ services:
         networks:
             elixir-net:
                 ipv4_address: 172.60.1.11
-    elixir-testing:
-        container_name: elixir-testing
-        build:
-            context: $TESTING_DIR
-            dockerfile: Dockerfile
-        restart: unless-stopped
-        volumes:
-            - '$TESTING_DIR:/var/www/:rw'
-            - /var/www/node_modules
-        extra_hosts:
-            - 'elixir.local api.elixir.local:172.60.0.1'
-        networks:
-            elixir-net:
-                ipv4_address: 172.60.1.12
+#    elixir-testing:
+#        container_name: elixir-testing
+#        build:
+#            context: $TESTING_DIR
+#            dockerfile: Dockerfile
+#        restart: unless-stopped
+#        volumes:
+#            - '$TESTING_DIR:/var/www/:rw'
+#            - /var/www/node_modules
+#        extra_hosts:
+#            - 'elixir.local api.elixir.local:172.60.0.1'
+#        networks:
+#            elixir-net:
+#                ipv4_address: 172.60.1.12
     elixir-mysql:
         container_name: elixir-mysql
         image: 'mariadb:latest'

@@ -64,7 +64,7 @@ defmodule Backend.BlogTest do
 
 		test "getUriFromString/1 test URI" do
 			assert is_nil(Post.getUriFromString(nil))
-			assert "z-e-a-C-F-A-B-V-G-D-s-or" = Post.getUriFromString("z e ā Č Ф А - Б В Г	Д š \ / * ^ % ! + ) | ")
+			assert "z-e-a-C-F-A-B-V-G-D-s-or" = Post.getUriFromString("z e ā Č Ф А - Б В Г	Д š \ / * ^ % ! + ) |")
     end
   end
 end
