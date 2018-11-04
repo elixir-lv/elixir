@@ -4,9 +4,9 @@ defmodule Backend.Account.User do
 
   @timestamps_opts [type: :naive_datetime, usec: false]
   schema "users" do
-    field :email, :string
-    field :name, :string
-    field :surname, :string
+    field(:email, :string)
+    field(:name, :string)
+    field(:surname, :string)
 
     timestamps()
   end
