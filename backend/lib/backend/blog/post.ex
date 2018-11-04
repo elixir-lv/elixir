@@ -3,7 +3,6 @@ defmodule Backend.Blog.Post do
   import Ecto.Changeset
   import Ecto.Query, warn: false
   alias Backend.Repo
-  alias Backend.Account.User
 
   @timestamps_opts [type: :naive_datetime, usec: false]
   schema "posts" do
@@ -41,7 +40,13 @@ defmodule Backend.Blog.Post do
   def getUniqueUriFromString(string, id) do
     generatedUri = string |> getUriFromString
 
-    if isURItaken(generatedUri, id) === false do
+    # Get the increment to put at the end if this URI is already taken.
+    if isURItaken(generatedUri, id) === true do
+      # Check if any URI with an increment part already exist for this URI.
+      # This is required to correctly increment the URI otherwise there will be duplicates.
+      URIithIncrement = getURIWithIncrement(generatedUri, id)
+    else
+      # URI is not taken so we can use the one that was generated from the title.
       generatedUri
     end
   end
@@ -51,6 +56,27 @@ defmodule Backend.Blog.Post do
 
   def isURItaken(uri, id) do
     query = __MODULE__ |> select(count("*")) |> limit(1) |> where([a], a.uri == ^uri)
+
+    # Avoid looking for this post.
+    if is_nil(id) === false do
+      query = query |> where([a], a.id != ^id)
+    end
+
+    query |> Repo.one() > 0
+  end
+
+  def getURIWithIncrement(generatedUri, id) when is_nil(generatedUri), do: nil
+
+  def getURIWithIncrement(generatedUri, id) do
+    # Search for this URI that ends with '-' and exactly 1 character.
+    # See https://dev.mysql.com/doc/refman/8.0/en/pattern-matching.html
+    query =
+      __MODULE__
+      |> select("uri")
+      |> limit(1)
+      |> where([a], like(a.uri, ^"#{generatedUri}-_"))
+      # Collect URIs with a highest increment.
+      |> order_by(desc: :uri)
 
     # Avoid looking for this post.
     if is_nil(id) === false do
