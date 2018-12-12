@@ -41,14 +41,27 @@ defmodule Backend.Blog.Post do
     generatedUri = string |> getUriFromString
 
     # Get the increment to put at the end if this URI is already taken.
-    if isURItaken(generatedUri, id) === true do
-      # Check if any URI with an increment part already exist for this URI.
-      # This is required to correctly increment the URI otherwise there will be duplicates.
-      URIithIncrement = getURIWithIncrement(generatedUri, id)
-    else
-      # URI is not taken so we can use the one that was generated from the title.
-      generatedUri
-    end
+    uri =
+      if isURItaken(generatedUri, id) === true do
+        # Check if any URI with an increment part already exist for this URI.
+        # This is required to correctly increment the URI otherwise there will be duplicates.
+        uriWithIncrement = getURIWithIncrement(generatedUri, id)
+
+        # Did not find any URI with an increment at the end.
+        increment = if is_nil(uriWithIncrement) do
+          1
+          # Found URI wiht an increment at the end.
+        else
+          # Increase the incremnet.
+          lastIncrement = uriWithIncrement |> String.split("-") |> List.last() |> String.to_integer
+          lastIncrement + 1
+        end
+
+        "#{generatedUri}-#{increment}"
+      else
+        # URI is not taken so we can use the one that was generated from the title.
+        generatedUri
+      end
   end
 
   # First check if exist any post with this URI, that is not this post itself.
@@ -58,11 +71,14 @@ defmodule Backend.Blog.Post do
     query = __MODULE__ |> select(count("*")) |> limit(1) |> where([a], a.uri == ^uri)
 
     # Avoid looking for this post.
-    if is_nil(id) === false do
-      query = query |> where([a], a.id != ^id)
+    query = if is_nil(id) === false do
+      query |> where([a], a.id != ^id)
+    else
+      query
     end
 
-    query |> Repo.one() > 0
+    count = query |> Repo.one()
+    count > 0
   end
 
   def getURIWithIncrement(generatedUri, id) when is_nil(generatedUri), do: nil
@@ -72,18 +88,21 @@ defmodule Backend.Blog.Post do
     # See https://dev.mysql.com/doc/refman/8.0/en/pattern-matching.html
     query =
       __MODULE__
-      |> select("uri")
+      |> select([a], a.uri)
       |> limit(1)
       |> where([a], like(a.uri, ^"#{generatedUri}-_"))
       # Collect URIs with a highest increment.
       |> order_by(desc: :uri)
+    # Ecto.Adapters.SQL.to_sql(:all, Repo, query) |> IO.inspect
 
     # Avoid looking for this post.
-    if is_nil(id) === false do
-      query = query |> where([a], a.id != ^id)
+    query = if is_nil(id) === false do
+      query |> where([a], a.id != ^id)
+    else
+      query
     end
 
-    query |> Repo.one() > 0
+    query |> Repo.one()
   end
 
   def getUriFromString(string) when is_nil(string), do: nil

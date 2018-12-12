@@ -66,5 +66,84 @@ defmodule Backend.BlogTest do
 			assert is_nil(Post.getUriFromString(nil))
 			assert "z-e-a-C-F-A-B-V-G-D-s-or" = Post.getUriFromString("z e ā Č Ф А - Б В Г	Д š \ / * ^ % ! + ) |")
     end
+
+    test "Increment URI" do
+
+      uri = "Some-title";
+      assert false == Post.isURItaken(uri, nil)
+      assert {:ok, %Post{} = post} = Blog.create_post(@valid_attrs)
+      assert post.uri == uri
+      assert false == Post.isURItaken(uri, post.id)
+      assert true == Post.isURItaken(uri, 999)
+      assert true == Post.isURItaken(uri, nil)
+
+      uri = "Some-title-1";
+      assert false == Post.isURItaken(uri, nil)
+      assert {:ok, %Post{} = post2} = Blog.create_post(@valid_attrs)
+      assert post2.uri == uri
+      assert post2.title == post.title
+      assert post2.id != post.id
+      assert post2.uri != post.uri
+      assert false == Post.isURItaken(uri, post2.id)
+      assert true == Post.isURItaken(uri, 999)
+      assert true == Post.isURItaken(uri, nil)
+
+      uri = "Some-title-2";
+      assert false == Post.isURItaken(uri, nil)
+      assert {:ok, %Post{} = post3} = Blog.create_post(@valid_attrs)
+      assert post2.id != post3.id
+      assert post3.uri == uri
+      assert false == Post.isURItaken(uri, post3.id)
+      assert true == Post.isURItaken(uri, 999)
+      assert true == Post.isURItaken(uri, nil)
+
+      uri = uri = "Some-title-1-1";
+      assert false == Post.isURItaken(uri, nil)
+      assert {:ok, %Post{} = post} = Blog.create_post(%{title: "Some title 1"})
+      assert post.uri == uri
+      assert false == Post.isURItaken(uri, post.id)
+      assert true == Post.isURItaken(uri, 999)
+      assert true == Post.isURItaken(uri, nil)
+
+      uri = uri = "Some-title-1-2";
+      assert false == Post.isURItaken(uri, nil)
+      assert {:ok, %Post{} = post} = Blog.create_post(%{title: "Some title 1"})
+      assert post.uri == uri
+      assert false == Post.isURItaken(uri, post.id)
+      assert true == Post.isURItaken(uri, 999)
+      assert true == Post.isURItaken(uri, nil)
+
+      uri = uri = "Some-title-2-1";
+      assert false == Post.isURItaken(uri, nil)
+      assert {:ok, %Post{} = post} = Blog.create_post(%{title: "Some title 2"})
+      assert post.uri == uri
+      assert false == Post.isURItaken(uri, post.id)
+      assert true == Post.isURItaken(uri, 999)
+      assert true == Post.isURItaken(uri, nil)
+
+      uri = uri = "Some-title-2-2";
+      assert false == Post.isURItaken(uri, nil)
+      assert {:ok, %Post{} = post} = Blog.create_post(%{title: "Some title 2"})
+      assert post.uri == uri
+      assert false == Post.isURItaken(uri, post.id)
+      assert true == Post.isURItaken(uri, 999)
+      assert true == Post.isURItaken(uri, nil)
+
+      uri = uri = "Some-title-7";
+      assert false == Post.isURItaken(uri, nil)
+      assert {:ok, %Post{} = post} = Blog.create_post(%{title: "Some title 7"})
+      assert post.uri == uri
+      assert false == Post.isURItaken(uri, post.id)
+      assert true == Post.isURItaken(uri, 999)
+      assert true == Post.isURItaken(uri, nil)
+
+      uri = uri = "Some-title-7-1";
+      assert false == Post.isURItaken(uri, nil)
+      assert {:ok, %Post{} = post} = Blog.create_post(%{title: "Some title 7"})
+      assert post.uri == uri
+      assert false == Post.isURItaken(uri, post.id)
+      assert true == Post.isURItaken(uri, 999)
+      assert true == Post.isURItaken(uri, nil)
+    end
   end
 end
