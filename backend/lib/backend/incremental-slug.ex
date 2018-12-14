@@ -4,12 +4,13 @@ defmodule Backend.IncrementalSlug do
   import Ecto.Changeset
   alias Backend.Repo
 
-  @fromField Application.get_env(:backend, :incremental_slug_from_field, :title)
-  @toField Application.get_env(:backend, :incremental_slug_to_field, :slug)
+  @incremental_slug Application.get_env(:backend, :incremental_slug)
 
-  def put(changeset, module, fromField \\ @fromField, toField \\ @toField)
+  # def put(changeset, module, fromField \\ @fromField, toField \\ @toField)
   def put(changeset, module, fromField, toField) when is_nil(changeset) or is_nil(module), do: changeset
-  def put(changeset, module, fromField, toField), do: getSlugFromField(changeset, module, fromField, toField) |> putSlug(changeset, toField)
+  def put(changeset, module, fromField, toField), do: IO.inspect @incremental_slug exit 'aaa'
+
+  # getSlugFromField(changeset, module, fromField, toField) |> putSlug(changeset, toField)
 
   def getSlugFromField(changeset, module, fromField \\ @fromField, toField \\ @toField)
   def getSlugFromField(changeset, module, fromField, toField), do: get_change(changeset, fromField) |> getUniq(get_change(changeset, :id), module, toField)
