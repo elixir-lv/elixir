@@ -27,8 +27,8 @@ config :slugger, separator_char: ?-
 # Path to the file containing replacements.
 config :slugger, replacement_file: "lib/replacements.exs"
 
-# config :incremental_slug, :from_field: :title
-# config :incremental_slug, :to_field: :uri
+config :backend, incremental_slug_from_field: :title
+config :backend, incremental_slug_to_field: :uri
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
