@@ -1,13 +1,7 @@
-* donload phx docs.
-* see plug.
+# Use the slug in another module
 
-## Make the incrementable-slug re-usable
-
-Could be used in other modules too.
-
-* Works with the modules scheme so could find items in the database.
-* Pass the module.
-* Replace __MODULE__ with the passed value.
+* Make sure it works as expected outside the Posts module.
+* When that is done, then move the incremental slugger to a separate repo or just to dev/Elixir.
 
 ## Posts
 
