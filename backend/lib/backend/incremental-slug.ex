@@ -6,67 +6,71 @@ defmodule Backend.IncrementalSlug do
 
   @incremental_slug Application.get_env(:backend, :incremental_slug)
 
-  # def put(changeset, module, fromField \\ @fromField, toField \\ @toField)
+  # Get a unique slug, by convertig the passed value (fromField), and put it in the changeset's :toField.
+  def put(changeset, module, fromField \\ @incremental_slug.from_field, toField \\ @incremental_slug.to_field)
   def put(changeset, module, fromField, toField) when is_nil(changeset) or is_nil(module), do: changeset
-  def put(changeset, module, fromField, toField), do: IO.inspect @incremental_slug exit 'aaa'
+  def put(changeset, module, fromField, toField), do: getSlugFromField(changeset, module, fromField, toField) |> putSlug(changeset, toField)
 
-  # getSlugFromField(changeset, module, fromField, toField) |> putSlug(changeset, toField)
-
-  def getSlugFromField(changeset, module, fromField \\ @fromField, toField \\ @toField)
+  # Get a unique slug by convertig the passed value (fromField).
+  def getSlugFromField(changeset, module, fromField \\ @incremental_slug.from_field, toField \\ @incremental_slug.to_field)
   def getSlugFromField(changeset, module, fromField, toField), do: get_change(changeset, fromField) |> getUniq(get_change(changeset, :id), module, toField)
 
-  def getUniq(string, id, module, toField \\ @toField)
+  # Get a unique slug.
+  def getUniq(string, id, module, toField \\ @incremental_slug.to_field)
   def getUniq(string, id, module, toField) when is_nil(string) or id == 0 or is_nil(module), do: nil
-  def getUniq(string, id, module, toField), do: string |> getSlug |> getUniqSlug(id, module, toField)
+  def getUniq(string, id, module, toField), do: string |> getSlug |> makeSlugUnique(id, module, toField)
 
-  def getUniqSlug(string, id, module, toField \\ @toField)
-  def getUniqSlug(string, id, module, toField), do: isTaken(string, id, module, toField) |> getUniqSlug(string, id, module, toField)
-  def getUniqSlug(taken, string, id, module, toField) when taken === true, do: getIncrement(string, id, module, toField) |> concat(string)
-  def getUniqSlug(taken, string, id, module, toField), do: string
+  # Make sure that the passed slug will be unique.
+  def makeSlugUnique(slug, id, module, toField \\ @incremental_slug.to_field)
+  def makeSlugUnique(slug, id, module, toField), do: isTaken(slug, id, module, toField) |> makeSlugUnique(slug, id, module, toField)
+  def makeSlugUnique(taken, slug, id, module, toField) when taken === true, do: getIncrement(slug, id, module, toField) |> concat(slug)
+  def makeSlugUnique(taken, slug, id, module, toField), do: slug
 
   def concat(increment, string), do: "#{string}-#{increment}"
 
+  # Get a slug that is genererated from the passed string.
   def getSlug(string) when is_nil(string), do: nil
   def getSlug(string), do: string |> String.trim() |> Slugger.slugify()
 
-  # First check if exist any post with this URI, that is not this post itself.
-  def isTaken(uri, id, module, toField \\ @toField)
-  def isTaken(uri, id, module, toField) when is_nil(uri) or id == 0 or is_nil(module), do: nil
-  def isTaken(uri, id, module, toField), do: getCount(uri, id, module, toField) > 0
+  # Check if another item has taken this slug.
+  def isTaken(string, id, module, toField \\ @incremental_slug.to_field)
+  def isTaken(string, id, module, toField) when is_nil(string) or id == 0 or is_nil(module), do: nil
+  def isTaken(string, id, module, toField), do: getCount(string, id, module, toField) > 0
 
-  def getCount(uri, id, module, toField \\ @toField)
-  def getCount(uri, id, module, toField), do: module |> select(count("*")) |> limit(1) |> where([a], field(a, ^toField) == ^uri) |> exlcudeSelf(id) |> Repo.one
+  # Get the count of how many items has used this slug (with or without an increment).
+  def getCount(string, id, module, toField \\ @incremental_slug.to_field)
+  def getCount(string, id, module, toField), do: module |> select(count("*")) |> limit(1) |> where([a], field(a, ^toField) == ^string) |> exlcudeSelf(id) |> Repo.one
 
+  # Do not include the current item when looking for item's that has used this slug.
   def exlcudeSelf(query, id) when is_nil(id), do: query
   def exlcudeSelf(query, id), do: query |> where([a], a.id != ^id)
 
-  # Check if any URI with an increment part already exist for this URI.
-  # This is required to correctly increment the URI otherwise there will be duplicates.
-  def getIncrement(string, id, module, toField \\ @toField)
+  # Get the increment to add to the slug so it would be unique.
+  def getIncrement(string, id, module, toField \\ @incremental_slug.to_field)
   def getIncrement(string, id, module, toField), do: getLastIncrement(string, id, module, toField) |> getIncrement
   def getIncrement(lastIncrement), do: lastIncrement + 1
 
-  # Check if any URI with an increment part already exist for this URI.
-  # This is required to correctly increment the URI otherwise there will be duplicates.
-  def getLastIncrement(string, id, module, toField \\ @toField)
+  # Get the increment from the last item with this slug. Like post-1 increment is 1.
+  # If no item can be found then 0 will be returned.
+  def getLastIncrement(string, id, module, toField \\ @incremental_slug.to_field)
   def getLastIncrement(string, id, module, toField), do: find(string, id, module, toField) |> getLastIncrement
   def getLastIncrement(string) when is_nil(string), do: 0
   def getLastIncrement(string), do: string |> String.split("-") |> List.last() |> String.to_integer
 
-  # Search for this URI that ends with '-' and exactly 1 character.
-  # See https://dev.mysql.com/doc/refman/8.0/en/pattern-matching.html
-  def find(string, id, module, toField \\ @toField)
+  def find(string, id, module, toField \\ @incremental_slug.to_field)
   def find(string, id, module, toField) when is_nil(string) or id == 0 or is_nil(module), do: nil
   def find(string, id, module, toField), do: module |> selectField(toField) |> whereFieldWithIncrement(string, toField) |> exlcudeSelf(id) |> findLast(toField)
 
-  def selectField(module, toField \\ @toField)
+  def selectField(module, toField \\ @incremental_slug.to_field)
   def selectField(module, toField), do: module |> select([a], field(a, ^toField))
 
-  def whereFieldWithIncrement(query, string, toField \\ @toField)
+  # Search for this slug that ends with '-' and exactly 1 character.
+  # See https://dev.mysql.com/doc/refman/8.0/en/pattern-matching.html
+  def whereFieldWithIncrement(query, string, toField \\ @incremental_slug.to_field)
   def whereFieldWithIncrement(query, string, toField), do: query |> where([a], like(field(a, ^toField), ^"#{string}-_"))
 
-  def findLast(query, toField \\ @toField)
+  def findLast(query, toField \\ @incremental_slug.to_field)
   def findLast(query, toField), do: query |> order_by(desc: ^toField) |> limit(1)  |> Repo.one
 
-  def putSlug(string, changeset, toField \\ @toField), do: changeset |> put_change(toField, string)
+  def putSlug(string, changeset, toField \\ @incremental_slug.to_field), do: changeset |> put_change(toField, string)
 end

@@ -2,7 +2,6 @@ defmodule Backend.Blog.Post do
   use Ecto.Schema
   import Ecto.Changeset
   import Ecto.Query, warn: false
-  alias Backend.Repo
 
   @timestamps_opts [type: :naive_datetime, usec: false]
   schema "posts" do
@@ -19,7 +18,7 @@ defmodule Backend.Blog.Post do
   def changeset(post, attrs) do
     post
     |> cast(attrs, [:title, :uri, :img, :rating, :text])
-    |> Backend.IncrementalSlug.put(__MODULE__)
+    |> Backend.IncrementalSlug.put(__MODULE__, :title, :uri)
     |> validate_required([:title, :uri])
   end
 
