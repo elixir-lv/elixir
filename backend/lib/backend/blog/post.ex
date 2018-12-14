@@ -19,7 +19,7 @@ defmodule Backend.Blog.Post do
   def changeset(post, attrs) do
     post
     |> cast(attrs, [:title, :uri, :img, :rating, :text])
-    |> Backend.IncrementalSlug.createUniqueUriFromTitle(__MODULE__)
+    |> Backend.IncrementalSlug.put(__MODULE__, :title, :uri)
     |> validate_required([:title, :uri])
   end
 

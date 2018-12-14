@@ -64,87 +64,87 @@ defmodule Backend.BlogTest do
     end
 
 		test "getUriFromString/1 test URI" do
-			assert is_nil(IncrementalSlug.getUriFromString(nil))
-			assert "z-e-a-C-F-A-B-V-G-D-s-or" = IncrementalSlug.getUriFromString("z e ā Č Ф А - Б В Г	Д š \ / * ^ % ! + ) |")
+			assert is_nil(IncrementalSlug.getSlug(nil))
+			assert "z-e-a-C-F-A-B-V-G-D-s-or" = IncrementalSlug.getSlug("z e ā Č Ф А - Б В Г	Д š \ / * ^ % ! + ) |")
     end
 
     test "Increment URI" do
 
       uri = "Some-title";
-      assert false == IncrementalSlug.isURItaken(uri, nil, Post)
+      assert false == IncrementalSlug.isTaken(uri, nil, Post, :uri)
       assert {:ok, %Post{} = post} = Blog.create_post(@valid_attrs)
       assert post.uri == uri
-      assert false == IncrementalSlug.isURItaken(uri, post.id, Post)
-      assert true == IncrementalSlug.isURItaken(uri, 999, Post)
-      assert true == IncrementalSlug.isURItaken(uri, nil, Post)
+      assert false == IncrementalSlug.isTaken(uri, post.id, Post, :uri)
+      assert true == IncrementalSlug.isTaken(uri, 999, Post, :uri)
+      assert true == IncrementalSlug.isTaken(uri, nil, Post, :uri)
 
       uri = "Some-title-1";
-      assert false == IncrementalSlug.isURItaken(uri, nil, Post)
+      assert false == IncrementalSlug.isTaken(uri, nil, Post, :uri)
       assert {:ok, %Post{} = post2} = Blog.create_post(@valid_attrs)
       assert post2.uri == uri
       assert post2.title == post.title
       assert post2.id != post.id
       assert post2.uri != post.uri
-      assert false == IncrementalSlug.isURItaken(uri, post2.id, Post)
-      assert true == IncrementalSlug.isURItaken(uri, 999, Post)
-      assert true == IncrementalSlug.isURItaken(uri, nil, Post)
+      assert false == IncrementalSlug.isTaken(uri, post2.id, Post, :uri)
+      assert true == IncrementalSlug.isTaken(uri, 999, Post, :uri)
+      assert true == IncrementalSlug.isTaken(uri, nil, Post, :uri)
 
       uri = "Some-title-2";
-      assert false == IncrementalSlug.isURItaken(uri, nil, Post)
+      assert false == IncrementalSlug.isTaken(uri, nil, Post, :uri)
       assert {:ok, %Post{} = post3} = Blog.create_post(@valid_attrs)
       assert post2.id != post3.id
       assert post3.uri == uri
-      assert false == IncrementalSlug.isURItaken(uri, post3.id, Post)
-      assert true == IncrementalSlug.isURItaken(uri, 999, Post)
-      assert true == IncrementalSlug.isURItaken(uri, nil, Post)
+      assert false == IncrementalSlug.isTaken(uri, post3.id, Post, :uri)
+      assert true == IncrementalSlug.isTaken(uri, 999, Post, :uri)
+      assert true == IncrementalSlug.isTaken(uri, nil, Post, :uri)
 
       uri = uri = "Some-title-1-1";
-      assert false == IncrementalSlug.isURItaken(uri, nil, Post)
+      assert false == IncrementalSlug.isTaken(uri, nil, Post, :uri)
       assert {:ok, %Post{} = post} = Blog.create_post(%{title: "Some title 1"})
       assert post.uri == uri
-      assert false == IncrementalSlug.isURItaken(uri, post.id, Post)
-      assert true == IncrementalSlug.isURItaken(uri, 999, Post)
-      assert true == IncrementalSlug.isURItaken(uri, nil, Post)
+      assert false == IncrementalSlug.isTaken(uri, post.id, Post, :uri)
+      assert true == IncrementalSlug.isTaken(uri, 999, Post, :uri)
+      assert true == IncrementalSlug.isTaken(uri, nil, Post, :uri)
 
       uri = uri = "Some-title-1-2";
-      assert false == IncrementalSlug.isURItaken(uri, nil, Post)
+      assert false == IncrementalSlug.isTaken(uri, nil, Post, :uri)
       assert {:ok, %Post{} = post} = Blog.create_post(%{title: "Some title 1"})
       assert post.uri == uri
-      assert false == IncrementalSlug.isURItaken(uri, post.id, Post)
-      assert true == IncrementalSlug.isURItaken(uri, 999, Post)
-      assert true == IncrementalSlug.isURItaken(uri, nil, Post)
+      assert false == IncrementalSlug.isTaken(uri, post.id, Post, :uri)
+      assert true == IncrementalSlug.isTaken(uri, 999, Post, :uri)
+      assert true == IncrementalSlug.isTaken(uri, nil, Post, :uri)
 
       uri = uri = "Some-title-2-1";
-      assert false == IncrementalSlug.isURItaken(uri, nil, Post)
+      assert false == IncrementalSlug.isTaken(uri, nil, Post, :uri)
       assert {:ok, %Post{} = post} = Blog.create_post(%{title: "Some title 2"})
       assert post.uri == uri
-      assert false == IncrementalSlug.isURItaken(uri, post.id, Post)
-      assert true == IncrementalSlug.isURItaken(uri, 999, Post)
-      assert true == IncrementalSlug.isURItaken(uri, nil, Post)
+      assert false == IncrementalSlug.isTaken(uri, post.id, Post, :uri)
+      assert true == IncrementalSlug.isTaken(uri, 999, Post, :uri)
+      assert true == IncrementalSlug.isTaken(uri, nil, Post, :uri)
 
       uri = uri = "Some-title-2-2";
-      assert false == IncrementalSlug.isURItaken(uri, nil, Post)
+      assert false == IncrementalSlug.isTaken(uri, nil, Post, :uri)
       assert {:ok, %Post{} = post} = Blog.create_post(%{title: "Some title 2"})
       assert post.uri == uri
-      assert false == IncrementalSlug.isURItaken(uri, post.id, Post)
-      assert true == IncrementalSlug.isURItaken(uri, 999, Post)
-      assert true == IncrementalSlug.isURItaken(uri, nil, Post)
+      assert false == IncrementalSlug.isTaken(uri, post.id, Post, :uri)
+      assert true == IncrementalSlug.isTaken(uri, 999, Post, :uri)
+      assert true == IncrementalSlug.isTaken(uri, nil, Post, :uri)
 
       uri = uri = "Some-title-7";
-      assert false == IncrementalSlug.isURItaken(uri, nil, Post)
+      assert false == IncrementalSlug.isTaken(uri, nil, Post, :uri)
       assert {:ok, %Post{} = post} = Blog.create_post(%{title: "Some title 7"})
       assert post.uri == uri
-      assert false == IncrementalSlug.isURItaken(uri, post.id, Post)
-      assert true == IncrementalSlug.isURItaken(uri, 999, Post)
-      assert true == IncrementalSlug.isURItaken(uri, nil, Post)
+      assert false == IncrementalSlug.isTaken(uri, post.id, Post, :uri)
+      assert true == IncrementalSlug.isTaken(uri, 999, Post, :uri)
+      assert true == IncrementalSlug.isTaken(uri, nil, Post, :uri)
 
       uri = uri = "Some-title-7-1";
-      assert false == IncrementalSlug.isURItaken(uri, nil, Post)
+      assert false == IncrementalSlug.isTaken(uri, nil, Post, :uri)
       assert {:ok, %Post{} = post} = Blog.create_post(%{title: "Some title 7"})
       assert post.uri == uri
-      assert false == IncrementalSlug.isURItaken(uri, post.id, Post)
-      assert true == IncrementalSlug.isURItaken(uri, 999, Post)
-      assert true == IncrementalSlug.isURItaken(uri, nil, Post)
+      assert false == IncrementalSlug.isTaken(uri, post.id, Post, :uri)
+      assert true == IncrementalSlug.isTaken(uri, 999, Post, :uri)
+      assert true == IncrementalSlug.isTaken(uri, nil, Post, :uri)
     end
   end
 end

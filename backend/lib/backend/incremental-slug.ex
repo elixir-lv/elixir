@@ -4,90 +4,54 @@ defmodule Backend.IncrementalSlug do
   import Ecto.Changeset
   alias Backend.Repo
 
-  def createUniqueUriFromTitle(changeset, module) when is_nil(changeset) or is_nil(module), do: changeset
+  # @fromField Application.get_env(:incremental_slug, :from_field, :title)
+  # @toField Application.get_env(:incremental_slug, :to_field, :slug)
 
-  def createUniqueUriFromTitle(changeset, module),
-    do: get_change(changeset, :title) |> createUniqueUriFromString(changeset, module)
+  def put(changeset, module, fromField, toField) when is_nil(changeset) or is_nil(module), do: changeset
+  def put(changeset, module, fromField, toField), do: getSlugFromField(changeset, module, fromField, toField) |> putSlug(changeset, toField)
 
-  def createUniqueUriFromString(string, changeset, module) when is_nil(string) or is_nil(changeset) or is_nil(module), do: changeset
+  def getSlugFromField(changeset, module, fromField, toField), do: get_change(changeset, fromField) |> getUniq(get_change(changeset, :id), toField, module)
 
-  def createUniqueUriFromString(string, changeset, module) do
-    uri = getUniqueUriFromString(string, get_change(changeset, :id), module)
-    changeset |> put_change(:uri, uri)
-  end
+  def getUniq(string, id, toField, module) when is_nil(string) or id == 0 or is_nil(module), do: nil
+  def getUniq(string, id, toField, module), do: string |> getSlug |> getUniqSlug(id, toField, module)
 
-  def getUniqueUriFromString(string, id, module) when is_nil(string) or id == 0 or is_nil(module), do: nil
+  def getUniqSlug(string, id, toField, module), do: isTaken(string, id, module, toField) |> getUniqSlug(string, id, toField, module)
+  def getUniqSlug(taken, string, id, toField, module) when taken === true, do: getIncrement(string, id, toField, module) |> concat(string)
+  def getUniqSlug(taken, string, id, toField, module), do: string
 
-  def getUniqueUriFromString(string, id, module) do
-    generatedUri = string |> getUriFromString
+  def concat(increment, string), do: "#{string}-#{increment}"
 
-    # Get the increment to put at the end if this URI is already taken.
-    uri =
-      if isURItaken(generatedUri, id, module) === true do
-        # Check if any URI with an increment part already exist for this URI.
-        # This is required to correctly increment the URI otherwise there will be duplicates.
-        uriWithIncrement = getURIWithIncrement(generatedUri, id, module)
-
-        # Did not find any URI with an increment at the end.
-        increment = if is_nil(uriWithIncrement) do
-          1
-          # Found URI wiht an increment at the end.
-        else
-          # Increase the incremnet.
-          lastIncrement = uriWithIncrement |> String.split("-") |> List.last() |> String.to_integer
-          lastIncrement + 1
-        end
-
-        "#{generatedUri}-#{increment}"
-      else
-        # URI is not taken so we can use the one that was generated from the title.
-        generatedUri
-      end
-
-      uri
-  end
+  def getSlug(string) when is_nil(string), do: nil
+  def getSlug(string), do: string |> String.trim() |> Slugger.slugify()
 
   # First check if exist any post with this URI, that is not this post itself.
-  def isURItaken(uri, id, module) when is_nil(uri) or id == 0 or is_nil(module), do: nil
+  def isTaken(uri, id, module, toField \\ :slug)
+  def isTaken(uri, id, module, toField) when is_nil(uri) or id == 0 or is_nil(module), do: nil
+  def isTaken(uri, id, module, toField), do: getCount(uri, id, toField, module) > 0
 
-  def isURItaken(uri, id, module) do
-    query = module |> select(count("*")) |> limit(1) |> where([a], a.uri == ^uri)
+  def getCount(uri, id, toField, module), do: module |> select(count("*")) |> limit(1) |> where([a], field(a, ^toField) == ^uri) |> exlcudeSelf(id) |> Repo.one
 
-    # Avoid looking for this post.
-    query = if is_nil(id) === false do
-      query |> where([a], a.id != ^id)
-    else
-      query
-    end
+  def exlcudeSelf(query, id) when is_nil(id), do: query
+  def exlcudeSelf(query, id), do: query |> where([a], a.id != ^id)
 
-    count = query |> Repo.one()
-    count > 0
-  end
+  # Check if any URI with an increment part already exist for this URI.
+  # This is required to correctly increment the URI otherwise there will be duplicates.
+  def getIncrement(string, id, toField, module), do: getLastIncrement(string, id, toField, module) |> getIncrement
+  def getIncrement(lastIncrement), do: lastIncrement + 1
 
-  def getURIWithIncrement(generatedUri, id, module) when is_nil(generatedUri) or id == 0 or is_nil(module), do: nil
+  # Check if any URI with an increment part already exist for this URI.
+  # This is required to correctly increment the URI otherwise there will be duplicates.
+  def getLastIncrement(string, id, toField, module), do: find(string, id, toField, module) |> getLastIncrement
+  def getLastIncrement(string) when is_nil(string), do: 0
+  def getLastIncrement(string), do: string |> String.split("-") |> List.last() |> String.to_integer
 
-  def getURIWithIncrement(generatedUri, id, module) do
-    # Search for this URI that ends with '-' and exactly 1 character.
-    # See https://dev.mysql.com/doc/refman/8.0/en/pattern-matching.html
-    query =
-      module
-      |> select([a], a.uri)
-      |> limit(1)
-      |> where([a], like(a.uri, ^"#{generatedUri}-_"))
-      # Collect URIs with a highest increment.
-      |> order_by(desc: :uri)
-    # Ecto.Adapters.SQL.to_sql(:all, Repo, query) |> IO.inspect
+  # Search for this URI that ends with '-' and exactly 1 character.
+  # See https://dev.mysql.com/doc/refman/8.0/en/pattern-matching.html
+  def find(string, id, toField, module) when is_nil(string) or id == 0 or is_nil(module), do: nil
+  def find(string, id, toField, module), do: module |> selectField(toField) |> whereFieldWithIncrement(string, toField) |> exlcudeSelf(id) |> findLast(toField)
+  def selectField(module, toField), do: module |> select([a], field(a, ^toField))
+  def whereFieldWithIncrement(query, string, toField), do: query |> where([a], like(field(a, ^toField), ^"#{string}-_"))
+  def findLast(query, toField), do: query |> order_by(desc: ^toField) |> limit(1)  |> Repo.one
 
-    # Avoid looking for this post.
-    query = if is_nil(id) === false do
-      query |> where([a], a.id != ^id)
-    else
-      query
-    end
-
-    query |> Repo.one()
-  end
-
-  def getUriFromString(string) when is_nil(string), do: nil
-  def getUriFromString(string), do: string |> String.trim() |> Slugger.slugify()
+  def putSlug(string, changeset, toField), do: changeset |> put_change(toField, string)
 end
