@@ -1,12 +1,18 @@
 defmodule Backend.IncrementalSlug do
 
+  @moduledoc """
+  Provide unique slugs by appending an increment if the slugs has already been used.
+  """
+
   import Ecto.Query, warn: false
   import Ecto.Changeset
   alias Backend.Repo
 
   @incremental_slug Application.get_env(:backend, :incremental_slug)
 
-  # Get a unique slug, by convertig the passed value (fromField), and put it in the changeset's :toField.
+  @doc """
+  Get a unique slug, by convertig the passed value (fromField), and put it in the changeset's :toField.
+  """
   def put(changeset, module, fromField \\ @incremental_slug.from_field, toField \\ @incremental_slug.to_field)
   def put(changeset, module, fromField, toField) when is_nil(changeset) or is_nil(module), do: changeset
   def put(changeset, module, fromField, toField), do: getSlugFromField(changeset, module, fromField, toField) |> putSlug(changeset, toField)
