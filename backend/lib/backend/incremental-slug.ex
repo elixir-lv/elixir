@@ -40,6 +40,16 @@ defmodule Backend.IncrementalSlug do
   def makeSlugUnique(taken, slug, id, module, toField) when taken === true, do: getIncrement(slug, id, module, toField) |> concat(slug)
   def makeSlugUnique(taken, slug, id, module, toField), do: slug
 
+  @doc """
+  Append the increment to the string.
+
+      iex> Backend.IncrementalSlug.concat(7, "Some-title")
+      "Some-title-7"
+
+      iex> Backend.IncrementalSlug.concat(123, "Hey")
+      "Hey-123"
+  """
+  @spec concat(increment :: integer, string :: String.t()) :: String.t()
   def concat(increment, string), do: "#{string}-#{increment}"
 
   @doc """
