@@ -477,6 +477,29 @@ defmodule Backend.IncrementalSlug do
   def find(slug, id, module, toField) when is_nil(slug) or id == 0 or is_nil(module), do: nil
   def find(slug, id, module, toField), do: module |> selectField(toField) |> whereFieldWithIncrement(slug, toField) |> exlcudeSelf(id) |> findLast(toField)
 
+  @doc """
+  Specify the slug field in a query.
+
+  ## Parameters
+
+  * `queryable` - Check the table to see if the generated slug is already taken.
+  * `toField` - In which changeset's field put the generated slug?
+
+  ## Return value
+
+  Query with selected field.
+
+  ## Examples
+
+      iex> alias Backend.{Blog.Post, IncrementalSlug}
+
+      iex> IncrementalSlug.selectField(Post, :slug)
+      #Ecto.Query<from p in Backend.Blog.Post, select: p.slug>
+
+      iex> IncrementalSlug.selectField(Post, :uri)
+      #Ecto.Query<from p in Backend.Blog.Post, select: p.uri>
+  """
+  @spec selectField(module :: Ecto.Queryable.t(), toField :: atom()) :: Ecto.Query.t()
   def selectField(module, toField \\ @incremental_slug.to_field)
   def selectField(module, toField), do: module |> select([a], field(a, ^toField))
 
