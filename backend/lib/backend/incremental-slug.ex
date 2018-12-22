@@ -532,6 +532,26 @@ defmodule Backend.IncrementalSlug do
   def whereFieldWithIncrement(query, slug, toField \\ @incremental_slug.to_field)
   def whereFieldWithIncrement(query, slug, toField), do: query |> where([a], like(field(a, ^toField), ^"#{slug}-_"))
 
+  @doc """
+  Add the query part that tells to take the last item which slug has the highest increment.
+
+  ## Parameters
+
+  * `query` - Any query - look for items or a count.
+  * `toField` - In which changeset's field put the generated slug?
+
+  ## Return value
+
+  `nil` or an item with the slug.
+
+  ## Examples
+
+      iex> alias Backend.{Blog.Post, IncrementalSlug}
+
+      iex> IncrementalSlug.findLast(Post, "Some-title")
+      %Post{id: 2, slug: "Some-title-2"}
+  """
+  @spec whereFieldWithIncrement(query :: Ecto.Query.t(), atom() )  :: Ecto.Queryable.t()
   def findLast(query, toField \\ @incremental_slug.to_field)
   def findLast(query, toField), do: query |> order_by(desc: ^toField) |> limit(1)  |> Repo.one
 
