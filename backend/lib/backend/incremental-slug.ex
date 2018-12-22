@@ -13,8 +13,28 @@ defmodule Backend.IncrementalSlug do
   @incremental_slug Application.get_env(:backend, :incremental_slug)
 
   @doc """
-  Get a unique slug, by convertig the passed value (fromField), and put it in the changeset's :toField.
+  Generate a slug, add an increment if the slug is taken, and put it in the changeset.
+
+  ## Parameter purpose
+
+  * `changeset` - take the value from a field, and put back the slug in another.
+  * `queryable` - check the table to see if the generated slug is already taken.
+  * `fromField` - from which changeset's field generate the slug?
+  * `toField` - in which changeset's field put the generated slug?
+
+  ## Examples
+
+      iex> alias Backend.{Blog.Post, IncrementalSlug, Repo}
+
+      iex> changeset = Post.changeset(%Post{}, %{title: "Some title"}) |> IncrementalSlug.put(Post)
+      iex> post = changeset |> Repo.insert!()
+      %Post{id: 1, title: "Some title", slug: "Some-title"}
+
+      iex> changeset2 = Post.changeset(%Post{}, %{title: "Some title"}) |> IncrementalSlug.put(Post)
+      iex> post2 = changeset2 |> Repo.insert!()
+      %Post{id: 2, title: "Some title", slug: "Some-title-1"}
   """
+  @spec put(changeset :: Ecto.Changeset.t() | nil, module :: Ecto.Queryable.t() | nil, fromField :: atom(), toField :: atom()) :: Ecto.Changeset.t()
   def put(changeset, module, fromField \\ @incremental_slug.from_field, toField \\ @incremental_slug.to_field)
   def put(changeset, module, fromField, toField) when is_nil(changeset) or is_nil(module), do: changeset
   def put(changeset, module, fromField, toField), do: getSlugFromField(changeset, module, fromField, toField) |> putSlug(changeset, toField)
