@@ -132,9 +132,49 @@ defmodule Backend.IncrementalSlug do
   """
   @spec makeSlugUnique( slug :: String.t(), id :: integer(), module :: Ecto.Queryable.t(), toField :: atom() ) :: String.t()
   def makeSlugUnique(slug, id, module, toField \\ @incremental_slug.to_field)
-  def makeSlugUnique(slug, id, module, toField), do: isTaken(slug, id, module, toField) |> makeSlugUnique(slug, id, module, toField)
-  def makeSlugUnique(taken, slug, id, module, toField) when taken === true, do: getIncrement(slug, id, module, toField) |> concat(slug)
-  def makeSlugUnique(taken, slug, id, module, toField), do: slug
+  def makeSlugUnique(slug, id, module, toField), do: isTaken(slug, id, module, toField) |> makeSlugUniqueIfTaken(slug, id, module, toField)
+
+  @doc """
+  Make sure that the passed slug will be unique.
+
+  ## Parameters
+
+  * `taken` - is this slug already taken?
+  * `slug` - A regular slug without an increment.
+  * `id` - Queryable item's ID. Required when looking if another item has the same slug.
+  * `queryable` - If it is taken, then get the last increment.
+  * `toField` - In which changeset's field put the generated slug?
+
+  ## Return value
+
+  The same slug, if it haven't been taken, otherwise with appended increment.
+
+  ## Examples
+
+      iex> alias Backend.{Blog.Post, IncrementalSlug, Repo}
+
+      iex> IncrementalSlug.makeSlugUniqueIfTaken(false, "Some-title", nil, Post)
+      "Some-title"
+
+      iex> Post.changeset(%Post{}, %{title: "Some title"}) |> Repo.insert!()
+      %Post{id: 1, title: "Some title", slug: "Some-title"}
+
+      iex>  IncrementalSlug.makeSlugUniqueIfTaken(false, "Some-title", nil, Post)
+      "Some-title"
+
+      iex>  IncrementalSlug.makeSlugUniqueIfTaken(true, "Some-title", nil, Post)
+      "Some-title-1"
+
+      iex> Post.changeset(%Post{}, %{title: "Some title"}) |> Repo.insert!()
+      %Post{id: 1, title: "Some title", slug: "Some-title"}
+
+      iex>  IncrementalSlug.makeSlugUniqueIfTaken(true, "Some-title", nil, Post)
+      "Some-title-2"
+  """
+  @spec makeSlugUniqueIfTaken( taken :: boolean(), slug :: String.t(), id :: integer(), module :: Ecto.Queryable.t(), toField :: atom() ) :: String.t()
+  def makeSlugUniqueIfTaken(taken, slug, id, module, toField \\ @incremental_slug.to_field)
+  def makeSlugUniqueIfTaken(taken, slug, id, module, toField) when taken === true, do: getIncrement(slug, id, module, toField) |> concat(slug)
+  def makeSlugUniqueIfTaken(taken, slug, id, module, toField), do: slug
 
   @doc """
   Append the increment to the string.
