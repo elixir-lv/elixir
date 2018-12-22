@@ -15,12 +15,16 @@ defmodule Backend.IncrementalSlug do
   @doc """
   Generate a slug, add an increment if the slug is taken, and put it in the changeset.
 
-  ## Parameter purpose
+  ## Parameter
 
   * `changeset` - Take the value from a field, and put back the slug in another.
   * `queryable` - Check the table to see if the generated slug is already taken.
   * `fromField` - From which changeset's field generate the slug?
   * `toField` - In which changeset's field put the generated slug?
+
+  ## Return values
+
+  If everything went well, then return the same changeset with a new slug, otherwise without.
 
   ## Examples
 
@@ -42,7 +46,7 @@ defmodule Backend.IncrementalSlug do
   @doc """
   Get a unique slug by convertig the passed value (fromField).
 
-  ## Parameter purpose
+  ## Parameter
 
   * `changeset` - Take the value from a field, and put back the slug in another.
   * `queryable` - Check the table to see if the generated slug is already taken.
@@ -70,12 +74,16 @@ defmodule Backend.IncrementalSlug do
   @doc """
   Get a unique slug.
 
-  ## Parameter purpose
+  ## Parameter
 
   * `string` - String from which generate the slug.
   * `id` - Queryable item's ID. Required when looking if another item has the same slug.
   * `queryable` - Check the table to see if the generated slug is already taken.
   * `toField` - In which changeset's field put the generated slug?
+
+  ## Return value
+
+  A slug, if it haven't been taken, otherwise with appended increment.
 
   ## Examples
 
@@ -97,7 +105,32 @@ defmodule Backend.IncrementalSlug do
 
   @doc """
   Make sure that the passed slug will be unique.
+
+  ## Parameters
+
+  * `slug` - A regular slug without an increment.
+  * `id` - Queryable item's ID. Required when looking if another item has the same slug.
+  * `queryable` - Check the table to see if the generated slug is already taken.
+  * `toField` - In which changeset's field put the generated slug?
+
+  ## Return value
+
+  The same slug, if it haven't been taken, otherwise with appended increment.
+
+  ## Examples
+
+      iex> alias Backend.{Blog.Post, IncrementalSlug, Repo}
+
+      iex> IncrementalSlug.makeSlugUnique("Some-title", nil, Post)
+      "Some-title"
+
+      iex> Post.changeset(%Post{}, %{title: "Some title"}) |> Repo.insert!()
+      %Post{id: 1, title: "Some title", slug: "Some-title"}
+
+      iex> IncrementalSlug.makeSlugUnique("Some-title", nil, Post)
+      "Some-title-1"
   """
+  @spec makeSlugUnique( slug :: String.t(), id :: integer(), module :: Ecto.Queryable.t(), toField :: atom() ) :: String.t()
   def makeSlugUnique(slug, id, module, toField \\ @incremental_slug.to_field)
   def makeSlugUnique(slug, id, module, toField), do: isTaken(slug, id, module, toField) |> makeSlugUnique(slug, id, module, toField)
   def makeSlugUnique(taken, slug, id, module, toField) when taken === true, do: getIncrement(slug, id, module, toField) |> concat(slug)
