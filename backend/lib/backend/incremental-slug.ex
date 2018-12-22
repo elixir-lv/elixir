@@ -41,6 +41,26 @@ defmodule Backend.IncrementalSlug do
 
   @doc """
   Get a unique slug by convertig the passed value (fromField).
+
+  ## Parameter purpose
+
+  * `changeset` - take the value from a field, and put back the slug in another.
+  * `queryable` - check the table to see if the generated slug is already taken.
+  * `fromField` - from which changeset's field generate the slug?
+  * `toField` - in which changeset's field put the generated slug?
+
+  ## Examples
+
+      iex> alias Backend.{Blog.Post, IncrementalSlug, Repo}
+
+      iex> changeset = Post.changeset(%Post{}, %{title: "Some title"})
+      iex> changeset |> IncrementalSlug.getSlugFromField(Post)
+      "Some-title"
+      iex> post = changeset |> Repo.insert!()
+      %Post{id: 1, title: "Some title", slug: "Some-title"}
+
+      iex> changeset |> IncrementalSlug.getSlugFromField(Post)
+      "Some-title-1"
   """
   def getSlugFromField(changeset, module, fromField \\ @incremental_slug.from_field, toField \\ @incremental_slug.to_field)
   def getSlugFromField(changeset, module, fromField, toField), do: get_change(changeset, fromField) |> getUniq(get_change(changeset, :id), module, toField)
