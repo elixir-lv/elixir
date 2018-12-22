@@ -423,9 +423,59 @@ defmodule Backend.IncrementalSlug do
   def getLastIncrement(slug) when is_nil(slug), do: 0
   def getLastIncrement(slug), do: slug |> String.split("-") |> List.last() |> String.to_integer
 
-  def find(string, id, module, toField \\ @incremental_slug.to_field)
-  def find(string, id, module, toField) when is_nil(string) or id == 0 or is_nil(module), do: nil
-  def find(string, id, module, toField), do: module |> selectField(toField) |> whereFieldWithIncrement(string, toField) |> exlcudeSelf(id) |> findLast(toField)
+
+  @doc """
+  Find the last item that has this slug (with or without an increment).
+
+  ## Parameters
+
+  * `slug` - A regular slug without an increment.
+  * `id` - Queryable item's ID. Required when looking if another item has the same slug.
+  * `queryable` - Check the table to see if the generated slug is already taken.
+  * `toField` - In which changeset's field put the generated slug?
+
+  ## Return value
+
+   Slug with an increment or `nil` of nothing was found. If there were multiple found, then the one with a highest increment
+   will be returned.
+
+  ## Useful to know
+
+  Highest increment that will be returned is 9, because the query looks for exactly 1 character after the '-' at the end of the slug.
+  See `IncrementalSlug.whereFieldWithIncrement\3`.
+
+  ## Examples
+
+      iex> alias Backend.{Blog.Post, IncrementalSlug, Repo}
+
+      iex> IncrementalSlug.find("Some-title", nil, Post)
+      nil
+
+      iex> Post.changeset(%Post{}, %{title: "Some title"}) |> Repo.insert!()
+      %Post{id: 1, title: "Some title", slug: "Some-title"}
+
+      iex> IncrementalSlug.find("Some-title", nil, Post)
+      nil
+
+      iex> Post.changeset(%Post{}, %{title: "Some title"}) |> Repo.insert!()
+      %Post{id: 2, title: "Some title", slug: "Some-title-1"}
+
+      iex> IncrementalSlug.find("Some-title", nil, Post)
+      Some-title-1
+
+      iex> Post.changeset(%Post{}, %{title: "Some title"}) |> Repo.insert!()
+      %Post{id: 3, title: "Some title", slug: "Some-title-2"}
+
+      iex> IncrementalSlug.find("Some-title", nil, Post)
+      Some-title-2
+  """
+  @spec find( slug :: String.t(), id :: integer(), module :: Ecto.Queryable.t(), toField :: atom() ) :: String.t() | nil
+  @spec find( slug :: nil, id :: integer(), module :: Ecto.Queryable.t(), toField :: atom() ) :: nil
+  @spec find( slug :: String.t(), id :: 0, module :: Ecto.Queryable.t(), toField :: atom() ) :: nil
+  @spec find( slug :: String.t(), id :: integer(), module :: nil, toField :: atom() ) :: nil
+  def find(slug, id, module, toField \\ @incremental_slug.to_field)
+  def find(slug, id, module, toField) when is_nil(slug) or id == 0 or is_nil(module), do: nil
+  def find(slug, id, module, toField), do: module |> selectField(toField) |> whereFieldWithIncrement(slug, toField) |> exlcudeSelf(id) |> findLast(toField)
 
   def selectField(module, toField \\ @incremental_slug.to_field)
   def selectField(module, toField), do: module |> select([a], field(a, ^toField))
