@@ -17,10 +17,10 @@ defmodule Backend.IncrementalSlug do
 
   ## Parameter purpose
 
-  * `changeset` - take the value from a field, and put back the slug in another.
-  * `queryable` - check the table to see if the generated slug is already taken.
-  * `fromField` - from which changeset's field generate the slug?
-  * `toField` - in which changeset's field put the generated slug?
+  * `changeset` - Take the value from a field, and put back the slug in another.
+  * `queryable` - Check the table to see if the generated slug is already taken.
+  * `fromField` - From which changeset's field generate the slug?
+  * `toField` - In which changeset's field put the generated slug?
 
   ## Examples
 
@@ -44,10 +44,10 @@ defmodule Backend.IncrementalSlug do
 
   ## Parameter purpose
 
-  * `changeset` - take the value from a field, and put back the slug in another.
-  * `queryable` - check the table to see if the generated slug is already taken.
-  * `fromField` - from which changeset's field generate the slug?
-  * `toField` - in which changeset's field put the generated slug?
+  * `changeset` - Take the value from a field, and put back the slug in another.
+  * `queryable` - Check the table to see if the generated slug is already taken.
+  * `fromField` - From which changeset's field generate the slug?
+  * `toField` - In which changeset's field put the generated slug?
 
   ## Examples
 
@@ -56,21 +56,44 @@ defmodule Backend.IncrementalSlug do
       iex> changeset = Post.changeset(%Post{}, %{title: "Some title"})
       iex> changeset |> IncrementalSlug.getSlugFromField(Post)
       "Some-title"
+
       iex> post = changeset |> Repo.insert!()
       %Post{id: 1, title: "Some title", slug: "Some-title"}
 
       iex> changeset |> IncrementalSlug.getSlugFromField(Post)
       "Some-title-1"
   """
+  @spec getSlugFromField(changeset :: Ecto.Changeset.t(), module :: Ecto.Queryable.t(), fromField :: atom(), toField :: atom()) :: String.t()
   def getSlugFromField(changeset, module, fromField \\ @incremental_slug.from_field, toField \\ @incremental_slug.to_field)
-  def getSlugFromField(changeset, module, fromField, toField), do: get_change(changeset, fromField) |> getUniq(get_change(changeset, :id), module, toField)
+  def getSlugFromField(changeset, module, fromField, toField), do: get_change(changeset, fromField) |> getUnique(get_change(changeset, :id), module, toField)
 
   @doc """
   Get a unique slug.
+
+  ## Parameter purpose
+
+  * `string` - String from which generate the slug.
+  * `id` - Queryable item's ID. Required when looking if another item has the same slug.
+  * `queryable` - Check the table to see if the generated slug is already taken.
+  * `toField` - In which changeset's field put the generated slug?
+
+  ## Examples
+
+      iex> alias Backend.{Blog.Post, IncrementalSlug, Repo}
+
+      iex> IncrementalSlug.getUnique("Some title", nil, Post)
+      "Some-title"
+
+      iex> Post.changeset(%Post{}, %{title: "Some title"}) |> Repo.insert!()
+      %Post{id: 1, title: "Some title", slug: "Some-title"}
+
+      iex> IncrementalSlug.getUnique("Some title", nil, %Post{})
+      "Some-title-1"
   """
-  def getUniq(string, id, module, toField \\ @incremental_slug.to_field)
-  def getUniq(string, id, module, toField) when is_nil(string) or id == 0 or is_nil(module), do: nil
-  def getUniq(string, id, module, toField), do: string |> getSlug |> makeSlugUnique(id, module, toField)
+  @spec getUnique( string :: String.t(), id :: integer(), module :: Ecto.Queryable.t(), toField :: atom() ) :: String.t()
+  def getUnique(string, id, module, toField \\ @incremental_slug.to_field)
+  def getUnique(string, id, module, toField) when is_nil(string) or id == 0 or is_nil(module), do: nil
+  def getUnique(string, id, module, toField), do: string |> getSlug |> makeSlugUnique(id, module, toField)
 
   @doc """
   Make sure that the passed slug will be unique.
