@@ -166,7 +166,7 @@ defmodule Backend.IncrementalSlug do
       "Some-title-1"
 
       iex> Post.changeset(%Post{}, %{title: "Some title"}) |> Repo.insert!()
-      %Post{id: 1, title: "Some title", slug: "Some-title"}
+      %Post{id: 2, title: "Some title", slug: "Some-title-1"}
 
       iex>  IncrementalSlug.makeSlugUniqueIfTaken(true, "Some-title", nil, Post)
       "Some-title-2"
@@ -240,10 +240,37 @@ defmodule Backend.IncrementalSlug do
   def isTaken(slug, id, module, toField), do: getCount(slug, id, module, toField) > 0
 
   @doc """
-  Get the count of how many items has used this slug (with or without an increment).
+  Get the count of how many items has used this exact slug.
+
+  ## Parameters
+
+  * `slug` - A regular slug without an increment.
+  * `id` - Queryable item's ID. Required when looking if another item has the same slug.
+  * `queryable` - Check the table to see if the generated slug is already taken.
+  * `toField` - In which changeset's field put the generated slug?
+
+  ## Examples
+
+      iex> alias Backend.{Blog.Post, IncrementalSlug, Repo}
+
+      iex> IncrementalSlug.getCount("Some-title", nil, Post)
+      0
+
+      iex> Post.changeset(%Post{}, %{title: "Some title"}) |> Repo.insert!()
+      %Post{id: 1, title: "Some title", slug: "Some-title"}
+
+      iex> IncrementalSlug.getCount("Some-title", nil, Post)
+      1
+
+      iex> Post.changeset(%Post{}, %{title: "Some title"}) |> Repo.insert!()
+      %Post{id: 2, title: "Some title", slug: "Some-title-1"}
+
+      iex> IncrementalSlug.getCount("Some-title", nil, Post)
+      1
   """
-  def getCount(string, id, module, toField \\ @incremental_slug.to_field)
-  def getCount(string, id, module, toField), do: module |> select(count("*")) |> limit(1) |> where([a], field(a, ^toField) == ^string) |> exlcudeSelf(id) |> Repo.one
+  @spec getCount( slug :: String.t(), id :: integer(), module :: Ecto.Queryable.t(), toField :: atom() ) :: integer()
+  def getCount(slug, id, module, toField \\ @incremental_slug.to_field)
+  def getCount(slug, id, module, toField), do: module |> select(count("*")) |> limit(1) |> where([a], field(a, ^toField) == ^slug) |> exlcudeSelf(id) |> Repo.one
 
   @doc """
   Do not include the current item when looking for item's that has used this slug.
