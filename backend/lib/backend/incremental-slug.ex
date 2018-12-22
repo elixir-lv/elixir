@@ -3,7 +3,13 @@ defmodule Backend.IncrementalSlug do
   @moduledoc """
   Provide unique slugs by appending an increment if the slugs has already been used.
 
-  Uses [github.com/h4cc/slugger](https://github.com/h4cc/slugger)
+  ## Depends on
+
+  * [github.com/h4cc/slugger](https://github.com/h4cc/slugger)
+
+  ## Useful to know
+
+  * Increment will grow from 1 to 10. See `IncrementalSlug.whereFieldWithIncrement\3`.
   """
 
   import Ecto.Query, warn: false
@@ -306,9 +312,45 @@ defmodule Backend.IncrementalSlug do
 
   @doc """
   Get the increment to add to the slug so it would be unique.
+
+  ## Parameters
+
+  * `slug` - A regular slug without an increment.
+  * `id` - Queryable item's ID. Required when looking if another item has the same slug.
+  * `queryable` - Check the table to see if the generated slug is already taken.
+  * `toField` - In which changeset's field put the generated slug?
+
+  ## Return value
+
+  1 if this slug is not taken, othewrise the increment from the item that has taken it (highest increment, if multiple has taken) and + 1.
+
+  ## Useful to know
+
+  Highest increment that will be returned is 10, because the query looks for exactly 1 character after the '-' at the end of the slug.
+  See `IncrementalSlug.whereFieldWithIncrement\3`.
+
+  ## Examples
+
+      iex> alias Backend.{Blog.Post, IncrementalSlug, Repo}
+
+      iex> IncrementalSlug.getIncrement("Some-title", nil, Post)
+      1
+
+      iex> Post.changeset(%Post{}, %{title: "Some title"}) |> Repo.insert!()
+      %Post{id: 1, title: "Some title", slug: "Some-title"}
+
+      iex> IncrementalSlug.getIncrement("Some-title", nil, Post)
+      1
+
+      iex> Post.changeset(%Post{}, %{title: "Some title"}) |> Repo.insert!()
+      %Post{id: 2, title: "Some title", slug: "Some-title-1"}
+
+      iex> IncrementalSlug.getIncrement("Some-title", nil, Post)
+      2
   """
-  def getIncrement(string, id, module, toField \\ @incremental_slug.to_field)
-  def getIncrement(string, id, module, toField), do: getLastIncrement(string, id, module, toField) |> getIncrement
+  @spec getIncrement( slug :: String.t(), id :: integer(), module :: Ecto.Queryable.t(), toField :: atom() ) :: integer()
+  def getIncrement(slug, id, module, toField \\ @incremental_slug.to_field)
+  def getIncrement(slug, id, module, toField), do: getLastIncrement(slug, id, module, toField) |> getIncrement
   def getIncrement(lastIncrement), do: lastIncrement + 1
 
   @doc """
