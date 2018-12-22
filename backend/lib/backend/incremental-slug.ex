@@ -209,10 +209,35 @@ defmodule Backend.IncrementalSlug do
 
   @doc """
   Check if another item has taken this slug.
+
+  ## Parameters
+
+  * `slug` - A regular slug without an increment.
+  * `id` - Queryable item's ID. Required when looking if another item has the same slug.
+  * `queryable` - Check the table to see if the generated slug is already taken.
+  * `toField` - In which changeset's field put the generated slug?
+
+  ## Return value
+
+  `true` if this slug has been taken, `false` if not.
+
+  ## Examples
+
+      iex> alias Backend.{Blog.Post, IncrementalSlug, Repo}
+
+      iex> IncrementalSlug.isTaken("Some-title", nil, Post)
+      false
+
+      iex> Post.changeset(%Post{}, %{title: "Some title"}) |> Repo.insert!()
+      %Post{id: 1, title: "Some title", slug: "Some-title"}
+
+      iex> IncrementalSlug.isTaken("Some-title", nil, Post)
+      true
   """
-  def isTaken(string, id, module, toField \\ @incremental_slug.to_field)
-  def isTaken(string, id, module, toField) when is_nil(string) or id == 0 or is_nil(module), do: nil
-  def isTaken(string, id, module, toField), do: getCount(string, id, module, toField) > 0
+  @spec isTaken( slug :: String.t(), id :: integer(), module :: Ecto.Queryable.t(), toField :: atom() ) :: boolean()
+  def isTaken(slug, id, module, toField \\ @incremental_slug.to_field)
+  def isTaken(slug, id, module, toField) when is_nil(slug) or id == 0 or is_nil(module), do: nil
+  def isTaken(slug, id, module, toField), do: getCount(slug, id, module, toField) > 0
 
   @doc """
   Get the count of how many items has used this slug (with or without an increment).
