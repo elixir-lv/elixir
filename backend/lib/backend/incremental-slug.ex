@@ -505,10 +505,32 @@ defmodule Backend.IncrementalSlug do
 
   @doc """
   Search for this slug that ends with '-' and exactly 1 character.
-  See https://dev.mysql.com/doc/refman/8.0/en/pattern-matching.html
+
+  See https://dev.mysql.com/doc/refman/8.0/en/pattern-matching.htm
+
+  ## Parameters
+
+  * `query` - Any query - look for items or a count.
+  * `slug` - A regular slug without an increment.
+  * `toField` - In which changeset's field put the generated slug?
+
+  ## Return value
+
+  Query with WHERE LIKE condfition.
+
+  ## Examples
+
+      iex> alias Backend.{Blog.Post, IncrementalSlug}
+
+      iex> IncrementalSlug.whereFieldWithIncrement(Post, "Some-title")
+      #Ecto.Query<from p in Backend.Blog.Post, where: like(p.uri, ^"Some-title-_")>
+
+      iex> IncrementalSlug.whereFieldWithIncrement(Post, "Hello-there")
+      #Ecto.Query<from p in Backend.Blog.Post, where: like(p.uri, ^"Hello-there-_")>
   """
-  def whereFieldWithIncrement(query, string, toField \\ @incremental_slug.to_field)
-  def whereFieldWithIncrement(query, string, toField), do: query |> where([a], like(field(a, ^toField), ^"#{string}-_"))
+  @spec whereFieldWithIncrement(query :: Ecto.Query.t(), slug :: String.t(), atom() )  :: Ecto.Query.t()
+  def whereFieldWithIncrement(query, slug, toField \\ @incremental_slug.to_field)
+  def whereFieldWithIncrement(query, slug, toField), do: query |> where([a], like(field(a, ^toField), ^"#{slug}-_"))
 
   def findLast(query, toField \\ @incremental_slug.to_field)
   def findLast(query, toField), do: query |> order_by(desc: ^toField) |> limit(1)  |> Repo.one
