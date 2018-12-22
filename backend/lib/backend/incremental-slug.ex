@@ -359,7 +359,6 @@ defmodule Backend.IncrementalSlug do
   @doc """
   Get the increment from the last item with this slug. Like post-1 increment is 1.
 
-
   ## Parameters
 
   * `slug` - A regular slug without an increment.
@@ -398,6 +397,29 @@ defmodule Backend.IncrementalSlug do
   @spec getIncrement( slug :: String.t(), id :: integer(), module :: Ecto.Queryable.t(), toField :: atom() ) :: integer()
   def getLastIncrement(slug, id, module, toField \\ @incremental_slug.to_field)
   def getLastIncrement(slug, id, module, toField), do: find(slug, id, module, toField) |> getLastIncrement
+
+  @doc """
+  Get the increment from a slug.
+
+  ## Parameters
+
+  * `slug` - A slug with an increment.
+
+  ## Return value
+
+  0 if this slug is `nil` (empty query) or a higher integer if has found.
+
+  ## Examples
+
+      iex> alias Backend.IncrementalSlug
+      iex> IncrementalSlug.getLastIncrement(nil)
+      0
+      iex> IncrementalSlug.getLastIncrement("Some-title-1")
+      1
+      iex> IncrementalSlug.getLastIncrement("Some-title-5")
+      5
+  """
+  @spec getLastIncrement(slug | nil :: String.t()) :: integer
   def getLastIncrement(slug) when is_nil(slug), do: 0
   def getLastIncrement(slug), do: slug |> String.split("-") |> List.last() |> String.to_integer
 
