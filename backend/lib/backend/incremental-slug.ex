@@ -351,16 +351,55 @@ defmodule Backend.IncrementalSlug do
   @spec getIncrement( slug :: String.t(), id :: integer(), module :: Ecto.Queryable.t(), toField :: atom() ) :: integer()
   def getIncrement(slug, id, module, toField \\ @incremental_slug.to_field)
   def getIncrement(slug, id, module, toField), do: getLastIncrement(slug, id, module, toField) |> getIncrement
-  def getIncrement(lastIncrement), do: lastIncrement + 1
+
+  @doc false
+  @spec getIncrement(lastIncrement :: integer()) :: integer()
+  defp getIncrement(lastIncrement), do: lastIncrement + 1
 
   @doc """
   Get the increment from the last item with this slug. Like post-1 increment is 1.
-  If no item can be found then 0 will be returned.
+
+
+  ## Parameters
+
+  * `slug` - A regular slug without an increment.
+  * `id` - Queryable item's ID. Required when looking if another item has the same slug.
+  * `queryable` - Check the table to see if the generated slug is already taken.
+  * `toField` - In which changeset's field put the generated slug?
+
+  ## Return value
+
+  0 if this slug is not taken, othewrise the increment from the item that has taken it (highest increment, if multiple has taken).
+
+  ## Useful to know
+
+  Highest increment that will be returned is 9, because the query looks for exactly 1 character after the '-' at the end of the slug.
+  See `IncrementalSlug.whereFieldWithIncrement\3`.
+
+  ## Examples
+
+      iex> alias Backend.{Blog.Post, IncrementalSlug, Repo}
+
+      iex> IncrementalSlug.getLastIncrement("Some-title", nil, Post)
+      0
+
+      iex> Post.changeset(%Post{}, %{title: "Some title"}) |> Repo.insert!()
+      %Post{id: 1, title: "Some title", slug: "Some-title"}
+
+      iex> IncrementalSlug.getLastIncrement("Some-title", nil, Post)
+      0
+
+      iex> Post.changeset(%Post{}, %{title: "Some title"}) |> Repo.insert!()
+      %Post{id: 2, title: "Some title", slug: "Some-title-1"}
+
+      iex> IncrementalSlug.getLastIncrement("Some-title", nil, Post)
+      1
   """
-  def getLastIncrement(string, id, module, toField \\ @incremental_slug.to_field)
-  def getLastIncrement(string, id, module, toField), do: find(string, id, module, toField) |> getLastIncrement
-  def getLastIncrement(string) when is_nil(string), do: 0
-  def getLastIncrement(string), do: string |> String.split("-") |> List.last() |> String.to_integer
+  @spec getIncrement( slug :: String.t(), id :: integer(), module :: Ecto.Queryable.t(), toField :: atom() ) :: integer()
+  def getLastIncrement(slug, id, module, toField \\ @incremental_slug.to_field)
+  def getLastIncrement(slug, id, module, toField), do: find(slug, id, module, toField) |> getLastIncrement
+  def getLastIncrement(slug) when is_nil(slug), do: 0
+  def getLastIncrement(slug), do: slug |> String.split("-") |> List.last() |> String.to_integer
 
   def find(string, id, module, toField \\ @incremental_slug.to_field)
   def find(string, id, module, toField) when is_nil(string) or id == 0 or is_nil(module), do: nil
