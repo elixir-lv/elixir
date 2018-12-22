@@ -555,5 +555,23 @@ defmodule Backend.IncrementalSlug do
   def findLast(query, toField \\ @incremental_slug.to_field)
   def findLast(query, toField), do: query |> order_by(desc: ^toField) |> limit(1)  |> Repo.one
 
-  def putSlug(string, changeset, toField \\ @incremental_slug.to_field), do: changeset |> put_change(toField, string)
+  @doc """
+  Put this slug into the selected changeset's field.
+
+  ## Parameters
+
+  * `slug` - A regular slug without an increment.
+  * `changeset` - Take the value from a field, and put back the slug in another.
+  * `toField` - In which changeset's field put the generated slug?
+
+  ## Examples
+
+      iex> alias Backend.{Blog.Post, IncrementalSlug, Repo}
+      iex> changeset = Post.changeset(%Post{}, %{title: "Some title"})
+      iex> changeset2 = "Some-slug" |> IncrementalSlug.putSlug(changeset)
+      iex> changeset2.changes
+      %{title: "Some title", uri: "Some-slug"},
+  """
+  @spec putSlug(slug :: String.t(), changeset :: Ecto.Changeset.t(), toField :: atom()) :: Ecto.Changeset.t()
+  def putSlug(slug, changeset, toField \\ @incremental_slug.to_field), do: changeset |> put_change(toField, slug)
 end
