@@ -274,7 +274,33 @@ defmodule Backend.IncrementalSlug do
 
   @doc """
   Do not include the current item when looking for item's that has used this slug.
+
+  If a valid ID has been passed, then will attach a where clause to the query, that exccludes the ID from the search.
+
+  ## Parameters
+
+  * `query` - Any query - look for items or a count.
+  * `id` - Queryable item's ID. Required when looking if another item has the same slug.
+
+  ## Return value
+
+  If a valid ID has been passed, then the same query but with extra where clause. othetwise the same query.
+
+  ## Examples
+
+      iex> alias Backend.{Blog.Post, IncrementalSlug, Repo}
+      iex> import Ecto.Query, warn: false
+
+      iex> query = Post |> select(count("*")) |> limit(1)
+      #Ecto.Query<from p in Backend.Blog.Post, limit: 1, select: count("*")>
+
+      iex> IncrementalSlug.exlcudeSelf(query, nil)
+      #Ecto.Query<from p in Backend.Blog.Post, limit: 1, select: count("*")>
+
+      iex> IncrementalSlug.exlcudeSelf(query, 123)
+      #Ecto.Query<from p in Backend.Blog.Post, where: p.id != ^123, limit: 1,  select: count("*")>
   """
+  @spec exlcudeSelf(query :: Ecto.Query.t(), id :: integer()) :: Ecto.Query.t()
   def exlcudeSelf(query, id) when is_nil(id), do: query
   def exlcudeSelf(query, id), do: query |> where([a], a.id != ^id)
 
