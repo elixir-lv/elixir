@@ -1,11 +1,9 @@
-# Add module attributtes to IncrementalSlug
+* Replace the uri field with slug.
+* What happens if the config is not set?
+* Write the use case.
+* Try elsewhere on a fresh project.
 
-* Use the blog.ex as an example.
-* Gen doc for the blog module.
-
-* doc/elixir/Module.html
-
-# Use the slug in another module
+## Use the slug in another module
 
 * Make sure it works as expected outside the Posts module.
 * When that is done, then move the incremental slugger to a separate repo or just to dev/Elixir.
