@@ -4,14 +4,16 @@ defmodule Backend.IncrementalSlug do
 
   Append an increment (1-10), if this slug is already taken.
 
-   ## Depends on
+  ## Depends on
 
   * [github.com/h4cc/slugger](https://github.com/h4cc/slugger)
 
-  ## Defaults
+  ## Defaults are defined in
 
-  They are defined in `config :backend, incremental_slug: %{from_field: :title, to_field: :uri}` but
-  can be overwiiten on the fly when calling a method.
+  ```ex
+  config :backend, incremental_slug: %{from_field: :title, to_field: :uri}
+  ```
+  but can be overwiiten on the fly when calling a method.
   """
 
   import Ecto.Query, warn: false
@@ -59,7 +61,7 @@ defmodule Backend.IncrementalSlug do
   def exlcudeID(queryable, id), do: queryable |> where([a], a.id != ^id)
 
   @doc """
-  Find the last item that has taken this slug (with or without an increment).
+  Find the taken slug. It may contain an increment.
 
   ## Parameters
 
@@ -70,13 +72,9 @@ defmodule Backend.IncrementalSlug do
 
   ## Return value
 
-   Slug with an increment or `nil` if nothing was found. If there were multiple found, then the one with the greatest increment
-   will be returned.
+   The slug with an increment or `nil`.
 
-  ## Useful to know
-
-  Greatest increment that will be returned is 9 because the query looks for exactly 1 character after the '-' at the end of the slug.
-  See `IncrementalSlug.whereFieldWithIncrement\3`.
+   In case, if multiple items were found, return the one with the greatest increment.
 
   ## Examples
 
@@ -126,10 +124,6 @@ defmodule Backend.IncrementalSlug do
 
   * `queryable` - Any query - look for items or a count.
   * `to` - In which changeset's field put the generated slug?
-
-  ## Return value
-
-  `nil` or an item with the slug.
 
   ## Examples
 
@@ -204,7 +198,7 @@ defmodule Backend.IncrementalSlug do
       |> Repo.one()
 
   @doc """
-  Find the increment for the slug so it would be unique.
+  Find an increment that can make this slug unique.
 
   ## Parameters
 
@@ -215,12 +209,11 @@ defmodule Backend.IncrementalSlug do
 
   ## Return value
 
-  `1` if this slug is not taken, otherwise the increment from the item that has taken it (greatest increment, if multiple have taken) and adds `1`.
+  The greatest increment `+1` or `1` if the slug is not taken.
 
   ## Useful to know
 
-  Highest increment that will be returned is 10 because the query looks for exactly 1 character after the '-' at the end of the slug.
-  See `IncrementalSlug.whereFieldWithIncrement\3`.
+  `10` is the greatest available increment. See why in `whereFieldWithIncrement/3`.
 
   ## Examples
 
@@ -268,12 +261,11 @@ defmodule Backend.IncrementalSlug do
 
   ## Return value
 
-  0 if this slug is not taken, othewrise the increment from the item that has taken it (greatest increment, if multiple has taken).
+  The greatest increment or `0` if the slug is not taken.
 
   ## Useful to know
 
-  Highest increment that will be returned is 9, because the query looks for exactly 1 character after the '-' at the end of the slug.
-  See `IncrementalSlug.whereFieldWithIncrement\3`.
+  `9` is the greatest increment that can be found. See why in `whereFieldWithIncrement/3`.
 
   ## Examples
 
@@ -306,7 +298,7 @@ defmodule Backend.IncrementalSlug do
     do: find(slug, id, queryable, to) |> getLastIncrement
 
   @doc """
-  Get an increment from a slug.
+  Extract an increment from the slug.
 
   ## Parameters
 
@@ -314,7 +306,7 @@ defmodule Backend.IncrementalSlug do
 
   ## Return value
 
-  0 if this slug is `nil` (empty query) or a higher integer if has found.
+  The Increment or `0`.
 
   ## Examples
 
@@ -331,9 +323,9 @@ defmodule Backend.IncrementalSlug do
   def getLastIncrement(slug), do: slug |> String.split("-") |> List.last() |> String.to_integer()
 
   @doc """
-  Get a slug that is genererated from the passed string.
+  Get a slug from the passed string.
 
-  Trim and then pass it to [`Slugger.slugify()`](https://github.com/h4cc/slugger)
+  Trim and pass it to [`Slugger.slugify/2`](https://github.com/h4cc/slugger)
 
   ## Examples
 
@@ -350,7 +342,7 @@ defmodule Backend.IncrementalSlug do
   def getSlug(string), do: string |> String.trim() |> Slugger.slugify()
 
   @doc """
-  Get a unique slug by convertig the passed value (from).
+  Get a unique slug from the selected changeset's field.
 
   ## Parameter
 
@@ -390,7 +382,7 @@ defmodule Backend.IncrementalSlug do
     do: get_change(changeset, from) |> getUnique(get_change(changeset, :id), queryable, to)
 
   @doc """
-  Get a unique slug.
+  Get a unique slug from a string.
 
   ## Parameter
 
@@ -401,7 +393,7 @@ defmodule Backend.IncrementalSlug do
 
   ## Return value
 
-  A slug, if it haven't been taken, otherwise with appended increment.
+  A slug (with an increment, if it was taken).
 
   ## Examples
 
@@ -440,10 +432,6 @@ defmodule Backend.IncrementalSlug do
   * `queryable` - Check the table to see if the generated slug is already taken.
   * `to` - In which changeset's field put the generated slug?
 
-  ## Return value
-
-  `true` if this slug has been taken, `false` if not.
-
   ## Examples
 
       iex> alias Backend.{Blog.Post, IncrementalSlug, Repo}
@@ -468,7 +456,7 @@ defmodule Backend.IncrementalSlug do
   def isTaken(slug, id, queryable, to), do: getCount(slug, id, queryable, to) > 0
 
   @doc """
-  Make sure that the passed slug will be unique.
+  Append an increment (1-10), if this slug is already taken.
 
   ## Parameters
 
@@ -476,10 +464,6 @@ defmodule Backend.IncrementalSlug do
   * `id` - Queryable item's ID. Required when looking if another item has the same slug.
   * `queryable` - Check the table to see if the generated slug is already taken.
   * `to` - In which changeset's field put the generated slug?
-
-  ## Return value
-
-  The same slug, if it haven't been taken, otherwise with appended increment.
 
   ## Examples
 
@@ -506,7 +490,7 @@ defmodule Backend.IncrementalSlug do
     do: isTaken(slug, id, queryable, to) |> makeSlugUniqueIfTaken(slug, id, queryable, to)
 
   @doc """
-  Make sure that the passed slug will be unique.
+  Append an increment (1-10), if this slug is already taken.
 
   ## Parameters
 
@@ -515,10 +499,6 @@ defmodule Backend.IncrementalSlug do
   * `id` - Queryable item's ID. Required when looking if another item has the same slug.
   * `queryable` - If it is taken, then get the last increment.
   * `to` - In which changeset's field put the generated slug?
-
-  ## Return value
-
-  The same slug, if it haven't been taken, otherwise with appended increment.
 
   ## Examples
 
