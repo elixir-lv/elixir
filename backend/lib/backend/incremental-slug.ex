@@ -108,12 +108,12 @@ defmodule Backend.IncrementalSlug do
     do:
       queryable
       |> selectField(to)
-      |> whereFieldWithIncrement(slug, to)
+      |> whereSlugWithIncrement(slug, to)
       |> exlcudeID(id)
-      |> findLast(to)
+      |> findItemWithGreatestIncrement(to)
 
   @doc """
-  Find the last item.
+  Find the item that has the slug with a greatest increment.
 
   ## Parameters
 
@@ -124,13 +124,13 @@ defmodule Backend.IncrementalSlug do
 
       iex> alias Backend.{Blog.Post, IncrementalSlug, Repo}
 
-      iex> IncrementalSlug.findLast(Post)
+      iex> IncrementalSlug.findItemWithGreatestIncrement(Post)
       nil
 
       iex> Post.changeset(%Post{}, %{title: "Some title"}) |> Repo.insert!()
       %Post{id: 1, slug: "Some-title"}
 
-      iex> IncrementalSlug.findLast(Post)
+      iex> IncrementalSlug.findItemWithGreatestIncrement(Post)
       %Post{id: 1, slug: "Some-title"}
 
       iex> Post.changeset(%Post{}, %{title: "Some title"}) |> Repo.insert!()
@@ -139,12 +139,15 @@ defmodule Backend.IncrementalSlug do
       iex> Post.changeset(%Post{}, %{title: "Some title"}) |> Repo.insert!()
       %Post{id: 3, slug: "Some-title-2"}
 
-      iex> IncrementalSlug.findLast(Post)
+      iex> IncrementalSlug.findItemWithGreatestIncrement(Post)
       %Post{id: 3, slug: "Some-title-2"}
   """
-  @spec findLast(queryable :: Ecto.Queryable.t(), atom()) :: Ecto.Schema.t() | nil
-  def findLast(queryable, to \\ @incremental_slug.to_field)
-  def findLast(queryable, to), do: queryable |> order_by(desc: ^to) |> limit(1) |> Repo.one()
+  @spec findItemWithGreatestIncrement(queryable :: Ecto.Queryable.t(), atom()) ::
+          Ecto.Schema.t() | nil
+  def findItemWithGreatestIncrement(queryable, to \\ @incremental_slug.to_field)
+
+  def findItemWithGreatestIncrement(queryable, to),
+    do: queryable |> order_by(desc: ^to) |> limit(1) |> Repo.one()
 
   @doc """
   Get a count of how many items have taken this exact slug.
@@ -193,6 +196,81 @@ defmodule Backend.IncrementalSlug do
       |> Repo.one()
 
   @doc """
+  Find the greatest increment from the items that have taken this slug.
+
+  ## Parameters
+
+  * `slug` - A regular slug without an increment.
+  * `id` - Exclude this ID from the query.
+  * `queryable` - In which table to look?
+  * `to` - In which column is the slug stored?
+
+  ## Return value
+
+  The greatest increment or `0` if the slug is not taken.
+
+  ## Useful to know
+
+  `9` is the greatest increment that can be found. See why in `whereSlugWithIncrement/3`.
+
+  ## Examples
+
+      iex> alias Backend.{Blog.Post, IncrementalSlug, Repo}
+
+      iex> IncrementalSlug.getGreatestIncrement("Some-title", nil, Post)
+      0
+
+      iex> Post.changeset(%Post{}, %{title: "Some title"}) |> Repo.insert!()
+      %Post{id: 1, title: "Some title", slug: "Some-title"}
+
+      iex> IncrementalSlug.getGreatestIncrement("Some-title", nil, Post)
+      0
+
+      iex> Post.changeset(%Post{}, %{title: "Some title"}) |> Repo.insert!()
+      %Post{id: 2, title: "Some title", slug: "Some-title-1"}
+
+      iex> IncrementalSlug.getGreatestIncrement("Some-title", nil, Post)
+      1
+  """
+  @spec getGreatestIncrement(
+          slug :: String.t(),
+          id :: integer(),
+          queryable :: Ecto.Queryable.t(),
+          to :: atom()
+        ) :: integer()
+  def getGreatestIncrement(slug, id, queryable, to \\ @incremental_slug.to_field)
+
+  def getGreatestIncrement(slug, id, queryable, to),
+    do: find(slug, id, queryable, to) |> getGreatestIncrement
+
+  @doc """
+  Extract an increment from the slug.
+
+  ## Parameters
+
+  * `slug` - A slug with an increment.
+
+  ## Return value
+
+  An increment or `0`.
+
+  ## Examples
+
+      iex> alias Backend.IncrementalSlug
+      iex> IncrementalSlug.getGreatestIncrement(nil)
+      0
+      iex> IncrementalSlug.getGreatestIncrement("Some-title-1")
+      1
+      iex> IncrementalSlug.getGreatestIncrement("Some-title-5")
+      5
+  """
+  @spec getGreatestIncrement(slug | nil :: String.t()) :: integer
+  def getGreatestIncrement(slug) when is_nil(slug), do: 0
+
+  def getGreatestIncrement(slug),
+    do: slug |> String.split("-") |> List.last() |> String.to_integer()
+
+  @doc """
   Find an increment that can make this slug unique.
 
   ## Parameters
@@ -208,7 +286,7 @@ defmodule Backend.IncrementalSlug do
 
   ## Useful to know
 
-  `10` is the greatest available increment. See why in `whereFieldWithIncrement/3`.
+  `10` is the greatest available increment. See why in `whereSlugWithIncrement/3`.
 
   ## Examples
 
@@ -238,84 +316,11 @@ defmodule Backend.IncrementalSlug do
   def getIncrement(slug, id, queryable, to \\ @incremental_slug.to_field)
 
   def getIncrement(slug, id, queryable, to),
-    do: getLastIncrement(slug, id, queryable, to) |> getIncrement
+    do: getGreatestIncrement(slug, id, queryable, to) |> getIncrement
 
   @doc false
   @spec getIncrement(lastIncrement :: integer()) :: integer()
   defp getIncrement(lastIncrement), do: lastIncrement + 1
-
-  @doc """
-  Find the greatest increment from the items that have taken this slug.
-
-  ## Parameters
-
-  * `slug` - A regular slug without an increment.
-  * `id` - Exclude this ID from the query.
-  * `queryable` - In which table to look?
-  * `to` - In which column is the slug stored?
-
-  ## Return value
-
-  The greatest increment or `0` if the slug is not taken.
-
-  ## Useful to know
-
-  `9` is the greatest increment that can be found. See why in `whereFieldWithIncrement/3`.
-
-  ## Examples
-
-      iex> alias Backend.{Blog.Post, IncrementalSlug, Repo}
-
-      iex> IncrementalSlug.getLastIncrement("Some-title", nil, Post)
-      0
-
-      iex> Post.changeset(%Post{}, %{title: "Some title"}) |> Repo.insert!()
-      %Post{id: 1, title: "Some title", slug: "Some-title"}
-
-      iex> IncrementalSlug.getLastIncrement("Some-title", nil, Post)
-      0
-
-      iex> Post.changeset(%Post{}, %{title: "Some title"}) |> Repo.insert!()
-      %Post{id: 2, title: "Some title", slug: "Some-title-1"}
-
-      iex> IncrementalSlug.getLastIncrement("Some-title", nil, Post)
-      1
-  """
-  @spec getLastIncrement(
-          slug :: String.t(),
-          id :: integer(),
-          queryable :: Ecto.Queryable.t(),
-          to :: atom()
-        ) :: integer()
-  def getLastIncrement(slug, id, queryable, to \\ @incremental_slug.to_field)
-
-  def getLastIncrement(slug, id, queryable, to),
-    do: find(slug, id, queryable, to) |> getLastIncrement
-
-  @doc """
-  Extract an increment from the slug.
-
-  ## Parameters
-
-  * `slug` - A slug with an increment.
-
-  ## Return value
-
-  An increment or `0`.
-
-  ## Examples
-
-      iex> alias Backend.IncrementalSlug
-      iex> IncrementalSlug.getLastIncrement(nil)
-      0
-      iex> IncrementalSlug.getLastIncrement("Some-title-1")
-      1
-      iex> IncrementalSlug.getLastIncrement("Some-title-5")
-      5
-  """
-  @spec getLastIncrement(slug | nil :: String.t()) :: integer
-  def getLastIncrement(slug) when is_nil(slug), do: 0
-  def getLastIncrement(slug), do: slug |> String.split("-") |> List.last() |> String.to_integer()
 
   @doc """
   Get a slug from the passed string.
@@ -646,16 +651,16 @@ defmodule Backend.IncrementalSlug do
 
       iex> alias Backend.{Blog.Post, IncrementalSlug}
 
-      iex> IncrementalSlug.whereFieldWithIncrement(Post, "Some-title")
+      iex> IncrementalSlug.whereSlugWithIncrement(Post, "Some-title")
       #Ecto.Query<from p in Backend.Blog.Post, where: like(p.uri, ^"Some-title-_")>
 
-      iex> IncrementalSlug.whereFieldWithIncrement(Post, "Hello-there")
+      iex> IncrementalSlug.whereSlugWithIncrement(Post, "Hello-there")
       #Ecto.Query<from p in Backend.Blog.Post, where: like(p.uri, ^"Hello-there-_")>
   """
-  @spec whereFieldWithIncrement(queryable :: Ecto.Queryable.t(), slug :: String.t(), atom()) ::
+  @spec whereSlugWithIncrement(queryable :: Ecto.Queryable.t(), slug :: String.t(), atom()) ::
           Ecto.Query.t()
-  def whereFieldWithIncrement(queryable, slug, to \\ @incremental_slug.to_field)
+  def whereSlugWithIncrement(queryable, slug, to \\ @incremental_slug.to_field)
 
-  def whereFieldWithIncrement(queryable, slug, to),
+  def whereSlugWithIncrement(queryable, slug, to),
     do: queryable |> where([a], like(field(a, ^to), ^"#{slug}-_"))
 end
