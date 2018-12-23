@@ -11,7 +11,7 @@ defmodule Backend.IncrementalSlug do
   ## Defaults are defined in
 
   ```ex
-  config :backend, incremental_slug: %{from_field: :title, to_field: :uri}
+  config :backend, incremental_slug: %{from_field: :title, to_field: :slug}
   ```
   but can be overwiiten on the fly when calling a method.
   """
@@ -72,7 +72,7 @@ defmodule Backend.IncrementalSlug do
 
   ## Return value
 
-   The slug with an increment or `nil`.
+   A slug with an increment or `nil`.
 
    In case, if multiple items were found, return the one with the greatest increment.
 
@@ -152,7 +152,7 @@ defmodule Backend.IncrementalSlug do
   def findLast(queryable, to), do: queryable |> order_by(desc: ^to) |> limit(1) |> Repo.one()
 
   @doc """
-  Get the count of how many items have taken this exact slug.
+  Get a count of how many items have taken this exact slug.
 
   ## Parameters
 
@@ -306,7 +306,7 @@ defmodule Backend.IncrementalSlug do
 
   ## Return value
 
-  The Increment or `0`.
+  An increment or `0`.
 
   ## Examples
 
@@ -539,7 +539,7 @@ defmodule Backend.IncrementalSlug do
   def makeSlugUniqueIfTaken(taken, slug, id, queryable, to), do: slug
 
   @doc """
-  Generate a slug, add an increment if the slug is taken, and put it in the changeset.
+  Get a slug and put it in the changeset.
 
   ## Parameter
 
@@ -550,7 +550,7 @@ defmodule Backend.IncrementalSlug do
 
   ## Return values
 
-  If everything went well, then return the same changeset with a new slug, otherwise without.
+  If everything went well, return the same changeset with a new slug, otherwise without.
 
   ## Examples
 
@@ -606,7 +606,7 @@ defmodule Backend.IncrementalSlug do
     do: changeset |> put_change(to, slug)
 
   @doc """
-  Specify the slug field in a query.
+  Specify the field where to look for a slug in a query.
 
   ## Parameters
 
@@ -615,7 +615,7 @@ defmodule Backend.IncrementalSlug do
 
   ## Return value
 
-  Query with selected field.
+  A query with a selected field.
 
   ## Examples
 
@@ -632,9 +632,10 @@ defmodule Backend.IncrementalSlug do
   def selectField(queryable, to), do: queryable |> select([a], field(a, ^to))
 
   @doc """
-  Search for this slug that ends with '-' and exactly 1 character.
+  Search for slugs that start just like this one and end with '-' and exactly 1 character.
 
-  See https://dev.mysql.com/doc/refman/8.0/en/pattern-matching.htm
+  * [MySQL pattern matching](https://dev.mysql.com/doc/refman/8.0/en/pattern-matching.htm)
+  * [PostgreSQL pattern matching](https://www.postgresql.org/docs/8.3/functions-matching.html#FUNCTIONS-LIKE)
 
   ## Parameters
 
@@ -644,7 +645,7 @@ defmodule Backend.IncrementalSlug do
 
   ## Return value
 
-  Query with WHERE LIKE condfition.
+  A query with a `WHERE LIKE` condition.
 
   ## Examples
 
