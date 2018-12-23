@@ -37,11 +37,6 @@ defmodule Backend.IncrementalSlug do
   @doc """
   Exclude this ID from the query.
 
-  ## Parameters
-
-  * `queryable` - Check the table to see if the generated slug is already taken.
-  * `id` - Queryable item's ID. Required when looking if another item has the same slug.
-
   ## Examples
 
       iex> alias Backend.{Blog.Post, IncrementalSlug, Repo}
@@ -61,14 +56,14 @@ defmodule Backend.IncrementalSlug do
   def exlcudeID(queryable, id), do: queryable |> where([a], a.id != ^id)
 
   @doc """
-  Find the taken slug. It may contain an increment.
+  Find the taken slug in the database. It may contain an increment.
 
   ## Parameters
 
   * `slug` - A regular slug without an increment.
-  * `id` - Queryable item's ID. Required when looking if another item has the same slug.
-  * `queryable` - Check the table to see if the generated slug is already taken.
-  * `to` - In which changeset's field put the generated slug?
+  * `id` - Exclude this ID from the query.
+  * `queryable` - In which table to look?
+  * `to` - In which column is the slug stored?
 
   ## Return value
 
@@ -122,8 +117,8 @@ defmodule Backend.IncrementalSlug do
 
   ## Parameters
 
-  * `queryable` - Any query - look for items or a count.
-  * `to` - In which changeset's field put the generated slug?
+  * `queryable` - In which table to look?
+  * `to` - In which column is the slug stored?
 
   ## Examples
 
@@ -157,9 +152,9 @@ defmodule Backend.IncrementalSlug do
   ## Parameters
 
   * `slug` - A regular slug without an increment.
-  * `id` - Queryable item's ID. Required when looking if another item has the same slug.
-  * `queryable` - Check the table to see if the generated slug is already taken.
-  * `to` - In which changeset's field put the generated slug?
+  * `id` - Exclude this ID from the query.
+  * `queryable` - In which table to look?
+  * `to` - In which column is the slug stored?
 
   ## Examples
 
@@ -203,9 +198,9 @@ defmodule Backend.IncrementalSlug do
   ## Parameters
 
   * `slug` - A regular slug without an increment.
-  * `id` - Queryable item's ID. Required when looking if another item has the same slug.
-  * `queryable` - Check the table to see if the generated slug is already taken.
-  * `to` - In which changeset's field put the generated slug?
+  * `id` - Exclude this ID from the query.
+  * `queryable` - In which table to look?
+  * `to` - In which column is the slug stored?
 
   ## Return value
 
@@ -255,9 +250,9 @@ defmodule Backend.IncrementalSlug do
   ## Parameters
 
   * `slug` - A regular slug without an increment.
-  * `id` - Queryable item's ID. Required when looking if another item has the same slug.
-  * `queryable` - Check the table to see if the generated slug is already taken.
-  * `to` - In which changeset's field put the generated slug?
+  * `id` - Exclude this ID from the query.
+  * `queryable` - In which table to look?
+  * `to` - In which column is the slug stored?
 
   ## Return value
 
@@ -347,9 +342,9 @@ defmodule Backend.IncrementalSlug do
   ## Parameter
 
   * `changeset` - Take the value from a field, and put back the slug in another.
-  * `queryable` - Check the table to see if the generated slug is already taken.
+  * `queryable` - In which table to look?
   * `from` - From which changeset's field generate the slug?
-  * `to` - In which changeset's field put the generated slug?
+  * `to` - In which column is the slug stored?
 
   ## Examples
 
@@ -386,10 +381,10 @@ defmodule Backend.IncrementalSlug do
 
   ## Parameter
 
-  * `string` - String from which generate the slug.
-  * `id` - Queryable item's ID. Required when looking if another item has the same slug.
-  * `queryable` - Check the table to see if the generated slug is already taken.
-  * `to` - In which changeset's field put the generated slug?
+  * `string` - Generate the slug from this string.
+  * `id` - Exclude this ID from the query.
+  * `queryable` - In which table to look?
+  * `to` - In which column is the slug stored?
 
   ## Return value
 
@@ -428,9 +423,9 @@ defmodule Backend.IncrementalSlug do
   ## Parameters
 
   * `slug` - A regular slug without an increment.
-  * `id` - Queryable item's ID. Required when looking if another item has the same slug.
-  * `queryable` - Check the table to see if the generated slug is already taken.
-  * `to` - In which changeset's field put the generated slug?
+  * `id` - Exclude this ID from the query.
+  * `queryable` - In which table to look?
+  * `to` - In which column is the slug stored?
 
   ## Examples
 
@@ -461,9 +456,9 @@ defmodule Backend.IncrementalSlug do
   ## Parameters
 
   * `slug` - A regular slug without an increment.
-  * `id` - Queryable item's ID. Required when looking if another item has the same slug.
-  * `queryable` - Check the table to see if the generated slug is already taken.
-  * `to` - In which changeset's field put the generated slug?
+  * `id` - Exclude this ID from the query.
+  * `queryable` - In which table to look?
+  * `to` - In which column is the slug stored?
 
   ## Examples
 
@@ -496,9 +491,9 @@ defmodule Backend.IncrementalSlug do
 
   * `taken` - is this slug already taken?
   * `slug` - A regular slug without an increment.
-  * `id` - Queryable item's ID. Required when looking if another item has the same slug.
+  * `id` - Exclude this ID from the query.
   * `queryable` - If it is taken, then get the last increment.
-  * `to` - In which changeset's field put the generated slug?
+  * `to` - In which column is the slug stored?
 
   ## Examples
 
@@ -544,9 +539,9 @@ defmodule Backend.IncrementalSlug do
   ## Parameter
 
   * `changeset` - Take the value from a field, and put back the slug in another.
-  * `queryable` - Check the table to see if the generated slug is already taken.
+  * `queryable` - In which table to look?
   * `from` - From which changeset's field generate the slug?
-  * `to` - In which changeset's field put the generated slug?
+  * `to` - In which column is the slug stored?
 
   ## Return values
 
@@ -590,7 +585,7 @@ defmodule Backend.IncrementalSlug do
 
   * `slug` - A regular slug without an increment.
   * `changeset` - Take the value from a field, and put back the slug in another.
-  * `to` - In which changeset's field put the generated slug?
+  * `to` - In which column is the slug stored?
 
   ## Examples
 
@@ -610,8 +605,8 @@ defmodule Backend.IncrementalSlug do
 
   ## Parameters
 
-  * `queryable` - Check the table to see if the generated slug is already taken.
-  * `to` - In which changeset's field put the generated slug?
+  * `queryable` - In which table to look?
+  * `to` - In which column is the slug stored?
 
   ## Return value
 
@@ -639,9 +634,9 @@ defmodule Backend.IncrementalSlug do
 
   ## Parameters
 
-  * `queryable` - Any query - look for items or a count.
+  * `queryable` - In which table to look?
   * `slug` - A regular slug without an increment.
-  * `to` - In which changeset's field put the generated slug?
+  * `to` - In which column is the slug stored?
 
   ## Return value
 
