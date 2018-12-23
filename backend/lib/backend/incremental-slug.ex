@@ -20,19 +20,17 @@ defmodule Backend.IncrementalSlug do
   @doc """
   Append the increment to the string.
 
-      iex> Backend.IncrementalSlug.concat(7, "Some-title")
+      iex> "Some-title" |> Backend.IncrementalSlug.append(7)
       "Some-title-7"
 
-      iex> Backend.IncrementalSlug.concat(123, "Hey")
+      iex> "Hey" |> Backend.IncrementalSlug.append(123)
       "Hey-123"
   """
-  @spec concat(increment :: integer, string :: String.t()) :: String.t()
-  def concat(increment, string), do: "#{string}-#{increment}"
+  @spec append(slug :: String.t(), increment :: integer) :: String.t()
+  def append(slug, increment), do: "#{slug}-#{increment}"
 
   @doc """
-  Do not include the current item when looking for item's that has used this slug.
-
-  If a valid ID has been passed, then will attach a where clause to the query, that exccludes the ID from the search.
+  Do not include the current item in the search, when looking for items that have used this slug.
 
   ## Parameters
 
@@ -41,7 +39,8 @@ defmodule Backend.IncrementalSlug do
 
   ## Return value
 
-  If a valid ID has been passed, then the same query but with extra where clause. othetwise the same query.
+  If a valid ID has been passed, then will attach a `WHERE` clause that exccludes the ID from the search,
+  the query.
 
   ## Examples
 
@@ -161,7 +160,7 @@ defmodule Backend.IncrementalSlug do
   def findLast(queryable, to), do: queryable |> order_by(desc: ^to) |> limit(1) |> Repo.one()
 
   @doc """
-  Get the count of how many items has used this exact slug.
+  Get the count of how many items haves used this exact slug.
 
   ## Parameters
 
@@ -309,7 +308,7 @@ defmodule Backend.IncrementalSlug do
     do: find(slug, id, queryable, to) |> getLastIncrement
 
   @doc """
-  Get the increment from a slug.
+  Get an increment from a slug.
 
   ## Parameters
 
@@ -353,7 +352,7 @@ defmodule Backend.IncrementalSlug do
   def getSlug(string), do: string |> String.trim() |> Slugger.slugify()
 
   @doc """
-  Get a unique slug by convertig the passed value (from).
+  Get a unique slug by convertig the passed value (`from`).
 
   ## Parameter
 
@@ -554,8 +553,10 @@ defmodule Backend.IncrementalSlug do
         ) :: String.t()
   def makeSlugUniqueIfTaken(taken, slug, id, queryable, to \\ @incremental_slug.to_field)
 
-  def makeSlugUniqueIfTaken(taken, slug, id, queryable, to) when taken === true,
-    do: getIncrement(slug, id, queryable, to) |> concat(slug)
+  def makeSlugUniqueIfTaken(taken, slug, id, queryable, to) when taken === true do
+    increment = getIncrement(slug, id, queryable, to)
+    slug |> append(increment)
+  end
 
   def makeSlugUniqueIfTaken(taken, slug, id, queryable, to), do: slug
 
