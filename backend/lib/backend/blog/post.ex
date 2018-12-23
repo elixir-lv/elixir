@@ -21,5 +21,4 @@ defmodule Backend.Blog.Post do
     |> Backend.IncrementalSlug.put(__MODULE__, :title, :uri)
     |> validate_required([:title, :uri])
   end
-
 end

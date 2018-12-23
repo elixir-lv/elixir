@@ -1,5 +1,4 @@
 defmodule Backend.IncrementalSlug do
-
   @moduledoc """
   Provide unique slugs by appending an increment if the slugs has already been used.
 
@@ -25,8 +24,8 @@ defmodule Backend.IncrementalSlug do
 
   * `changeset` - Take the value from a field, and put back the slug in another.
   * `queryable` - Check the table to see if the generated slug is already taken.
-  * `fromField` - From which changeset's field generate the slug?
-  * `toField` - In which changeset's field put the generated slug?
+  * `from` - From which changeset's field generate the slug?
+  * `to` - In which changeset's field put the generated slug?
 
   ## Return values
 
@@ -44,20 +43,34 @@ defmodule Backend.IncrementalSlug do
       iex> post2 = changeset2 |> Repo.insert!()
       %Post{id: 2, title: "Some title", slug: "Some-title-1"}
   """
-  @spec put(changeset :: Ecto.Changeset.t() | nil, queryable :: Ecto.Queryable.t() | nil, fromField :: atom(), toField :: atom()) :: Ecto.Changeset.t()
-  def put(changeset, queryable, fromField \\ @incremental_slug.from_field, toField \\ @incremental_slug.to_field)
-  def put(changeset, queryable, fromField, toField) when is_nil(changeset) or is_nil(queryable), do: changeset
-  def put(changeset, queryable, fromField, toField), do: getSlugFromField(changeset, queryable, fromField, toField) |> putSlug(changeset, toField)
+  @spec put(
+          changeset :: Ecto.Changeset.t() | nil,
+          queryable :: Ecto.Queryable.t() | nil,
+          from :: atom(),
+          to :: atom()
+        ) :: Ecto.Changeset.t()
+  def put(
+        changeset,
+        queryable,
+        from \\ @incremental_slug.from_field,
+        to \\ @incremental_slug.to_field
+      )
+
+  def put(changeset, queryable, from, to) when is_nil(changeset) or is_nil(queryable),
+    do: changeset
+
+  def put(changeset, queryable, from, to),
+    do: getSlugFromField(changeset, queryable, from, to) |> putSlug(changeset, to)
 
   @doc """
-  Get a unique slug by convertig the passed value (fromField).
+  Get a unique slug by convertig the passed value (from).
 
   ## Parameter
 
   * `changeset` - Take the value from a field, and put back the slug in another.
   * `queryable` - Check the table to see if the generated slug is already taken.
-  * `fromField` - From which changeset's field generate the slug?
-  * `toField` - In which changeset's field put the generated slug?
+  * `from` - From which changeset's field generate the slug?
+  * `to` - In which changeset's field put the generated slug?
 
   ## Examples
 
@@ -73,9 +86,21 @@ defmodule Backend.IncrementalSlug do
       iex> changeset |> IncrementalSlug.getSlugFromField(Post)
       "Some-title-1"
   """
-  @spec getSlugFromField(changeset :: Ecto.Changeset.t(), queryable :: Ecto.Queryable.t(), fromField :: atom(), toField :: atom()) :: String.t()
-  def getSlugFromField(changeset, queryable, fromField \\ @incremental_slug.from_field, toField \\ @incremental_slug.to_field)
-  def getSlugFromField(changeset, queryable, fromField, toField), do: get_change(changeset, fromField) |> getUnique(get_change(changeset, :id), queryable, toField)
+  @spec getSlugFromField(
+          changeset :: Ecto.Changeset.t(),
+          queryable :: Ecto.Queryable.t(),
+          from :: atom(),
+          to :: atom()
+        ) :: String.t()
+  def getSlugFromField(
+        changeset,
+        queryable,
+        from \\ @incremental_slug.from_field,
+        to \\ @incremental_slug.to_field
+      )
+
+  def getSlugFromField(changeset, queryable, from, to),
+    do: get_change(changeset, from) |> getUnique(get_change(changeset, :id), queryable, to)
 
   @doc """
   Get a unique slug.
@@ -85,7 +110,7 @@ defmodule Backend.IncrementalSlug do
   * `string` - String from which generate the slug.
   * `id` - Queryable item's ID. Required when looking if another item has the same slug.
   * `queryable` - Check the table to see if the generated slug is already taken.
-  * `toField` - In which changeset's field put the generated slug?
+  * `to` - In which changeset's field put the generated slug?
 
   ## Return value
 
@@ -104,10 +129,19 @@ defmodule Backend.IncrementalSlug do
       iex> IncrementalSlug.getUnique("Some title", nil, %Post{})
       "Some-title-1"
   """
-  @spec getUnique( string :: String.t(), id :: integer(), queryable :: Ecto.Queryable.t(), toField :: atom() ) :: String.t()
-  def getUnique(string, id, queryable, toField \\ @incremental_slug.to_field)
-  def getUnique(string, id, queryable, toField) when is_nil(string) or id == 0 or is_nil(queryable), do: nil
-  def getUnique(string, id, queryable, toField), do: string |> getSlug |> makeSlugUnique(id, queryable, toField)
+  @spec getUnique(
+          string :: String.t(),
+          id :: integer(),
+          queryable :: Ecto.Queryable.t(),
+          to :: atom()
+        ) :: String.t()
+  def getUnique(string, id, queryable, to \\ @incremental_slug.to_field)
+
+  def getUnique(string, id, queryable, to) when is_nil(string) or id == 0 or is_nil(queryable),
+    do: nil
+
+  def getUnique(string, id, queryable, to),
+    do: string |> getSlug |> makeSlugUnique(id, queryable, to)
 
   @doc """
   Make sure that the passed slug will be unique.
@@ -117,7 +151,7 @@ defmodule Backend.IncrementalSlug do
   * `slug` - A regular slug without an increment.
   * `id` - Queryable item's ID. Required when looking if another item has the same slug.
   * `queryable` - Check the table to see if the generated slug is already taken.
-  * `toField` - In which changeset's field put the generated slug?
+  * `to` - In which changeset's field put the generated slug?
 
   ## Return value
 
@@ -136,9 +170,16 @@ defmodule Backend.IncrementalSlug do
       iex> IncrementalSlug.makeSlugUnique("Some-title", nil, Post)
       "Some-title-1"
   """
-  @spec makeSlugUnique( slug :: String.t(), id :: integer(), queryable :: Ecto.Queryable.t(), toField :: atom() ) :: String.t()
-  def makeSlugUnique(slug, id, queryable, toField \\ @incremental_slug.to_field)
-  def makeSlugUnique(slug, id, queryable, toField), do: isTaken(slug, id, queryable, toField) |> makeSlugUniqueIfTaken(slug, id, queryable, toField)
+  @spec makeSlugUnique(
+          slug :: String.t(),
+          id :: integer(),
+          queryable :: Ecto.Queryable.t(),
+          to :: atom()
+        ) :: String.t()
+  def makeSlugUnique(slug, id, queryable, to \\ @incremental_slug.to_field)
+
+  def makeSlugUnique(slug, id, queryable, to),
+    do: isTaken(slug, id, queryable, to) |> makeSlugUniqueIfTaken(slug, id, queryable, to)
 
   @doc """
   Make sure that the passed slug will be unique.
@@ -149,7 +190,7 @@ defmodule Backend.IncrementalSlug do
   * `slug` - A regular slug without an increment.
   * `id` - Queryable item's ID. Required when looking if another item has the same slug.
   * `queryable` - If it is taken, then get the last increment.
-  * `toField` - In which changeset's field put the generated slug?
+  * `to` - In which changeset's field put the generated slug?
 
   ## Return value
 
@@ -177,10 +218,19 @@ defmodule Backend.IncrementalSlug do
       iex>  IncrementalSlug.makeSlugUniqueIfTaken(true, "Some-title", nil, Post)
       "Some-title-2"
   """
-  @spec makeSlugUniqueIfTaken( taken :: boolean(), slug :: String.t(), id :: integer(), queryable :: Ecto.Queryable.t(), toField :: atom() ) :: String.t()
-  def makeSlugUniqueIfTaken(taken, slug, id, queryable, toField \\ @incremental_slug.to_field)
-  def makeSlugUniqueIfTaken(taken, slug, id, queryable, toField) when taken === true, do: getIncrement(slug, id, queryable, toField) |> concat(slug)
-  def makeSlugUniqueIfTaken(taken, slug, id, queryable, toField), do: slug
+  @spec makeSlugUniqueIfTaken(
+          taken :: boolean(),
+          slug :: String.t(),
+          id :: integer(),
+          queryable :: Ecto.Queryable.t(),
+          to :: atom()
+        ) :: String.t()
+  def makeSlugUniqueIfTaken(taken, slug, id, queryable, to \\ @incremental_slug.to_field)
+
+  def makeSlugUniqueIfTaken(taken, slug, id, queryable, to) when taken === true,
+    do: getIncrement(slug, id, queryable, to) |> concat(slug)
+
+  def makeSlugUniqueIfTaken(taken, slug, id, queryable, to), do: slug
 
   @doc """
   Append the increment to the string.
@@ -210,7 +260,7 @@ defmodule Backend.IncrementalSlug do
   @spec getSlug(string :: nil) :: nil
   def getSlug(string) when is_nil(string), do: nil
 
-   @spec getSlug(string :: String.t()) :: String.t()
+  @spec getSlug(string :: String.t()) :: String.t()
   def getSlug(string), do: string |> String.trim() |> Slugger.slugify()
 
   @doc """
@@ -221,7 +271,7 @@ defmodule Backend.IncrementalSlug do
   * `slug` - A regular slug without an increment.
   * `id` - Queryable item's ID. Required when looking if another item has the same slug.
   * `queryable` - Check the table to see if the generated slug is already taken.
-  * `toField` - In which changeset's field put the generated slug?
+  * `to` - In which changeset's field put the generated slug?
 
   ## Return value
 
@@ -240,10 +290,15 @@ defmodule Backend.IncrementalSlug do
       iex> IncrementalSlug.isTaken("Some-title", nil, Post)
       true
   """
-  @spec isTaken( slug :: String.t(), id :: integer(), queryable :: Ecto.Queryable.t(), toField :: atom() ) :: boolean()
-  def isTaken(slug, id, queryable, toField \\ @incremental_slug.to_field)
-  def isTaken(slug, id, queryable, toField) when is_nil(slug) or id == 0 or is_nil(queryable), do: nil
-  def isTaken(slug, id, queryable, toField), do: getCount(slug, id, queryable, toField) > 0
+  @spec isTaken(
+          slug :: String.t(),
+          id :: integer(),
+          queryable :: Ecto.Queryable.t(),
+          to :: atom()
+        ) :: boolean()
+  def isTaken(slug, id, queryable, to \\ @incremental_slug.to_field)
+  def isTaken(slug, id, queryable, to) when is_nil(slug) or id == 0 or is_nil(queryable), do: nil
+  def isTaken(slug, id, queryable, to), do: getCount(slug, id, queryable, to) > 0
 
   @doc """
   Get the count of how many items has used this exact slug.
@@ -253,7 +308,7 @@ defmodule Backend.IncrementalSlug do
   * `slug` - A regular slug without an increment.
   * `id` - Queryable item's ID. Required when looking if another item has the same slug.
   * `queryable` - Check the table to see if the generated slug is already taken.
-  * `toField` - In which changeset's field put the generated slug?
+  * `to` - In which changeset's field put the generated slug?
 
   ## Examples
 
@@ -274,9 +329,22 @@ defmodule Backend.IncrementalSlug do
       iex> IncrementalSlug.getCount("Some-title", nil, Post)
       1
   """
-  @spec getCount( slug :: String.t(), id :: integer(), queryable :: Ecto.Queryable.t(), toField :: atom() ) :: integer()
-  def getCount(slug, id, queryable, toField \\ @incremental_slug.to_field)
-  def getCount(slug, id, queryable, toField), do: queryable |> select(count("*")) |> limit(1) |> where([a], field(a, ^toField) == ^slug) |> exlcudeSelf(id) |> Repo.one
+  @spec getCount(
+          slug :: String.t(),
+          id :: integer(),
+          queryable :: Ecto.Queryable.t(),
+          to :: atom()
+        ) :: integer()
+  def getCount(slug, id, queryable, to \\ @incremental_slug.to_field)
+
+  def getCount(slug, id, queryable, to),
+    do:
+      queryable
+      |> select(count("*"))
+      |> limit(1)
+      |> where([a], field(a, ^to) == ^slug)
+      |> exlcudeSelf(id)
+      |> Repo.one()
 
   @doc """
   Do not include the current item when looking for item's that has used this slug.
@@ -306,7 +374,7 @@ defmodule Backend.IncrementalSlug do
       iex> IncrementalSlug.exlcudeSelf(query, 123)
       #Ecto.Query<from p in Backend.Blog.Post, where: p.id != ^123, limit: 1,  select: count("*")>
   """
-  @spec exlcudeSelf(queryable :: Ecto.Queryable.t(), id :: integer()) :: Ecto.Query .t()
+  @spec exlcudeSelf(queryable :: Ecto.Queryable.t(), id :: integer()) :: Ecto.Query.t()
   def exlcudeSelf(queryable, id) when is_nil(id), do: queryable
   def exlcudeSelf(queryable, id), do: queryable |> where([a], a.id != ^id)
 
@@ -318,7 +386,7 @@ defmodule Backend.IncrementalSlug do
   * `slug` - A regular slug without an increment.
   * `id` - Queryable item's ID. Required when looking if another item has the same slug.
   * `queryable` - Check the table to see if the generated slug is already taken.
-  * `toField` - In which changeset's field put the generated slug?
+  * `to` - In which changeset's field put the generated slug?
 
   ## Return value
 
@@ -348,9 +416,16 @@ defmodule Backend.IncrementalSlug do
       iex> IncrementalSlug.getIncrement("Some-title", nil, Post)
       2
   """
-  @spec getIncrement( slug :: String.t(), id :: integer(), queryable :: Ecto.Queryable.t(), toField :: atom() ) :: integer()
-  def getIncrement(slug, id, queryable, toField \\ @incremental_slug.to_field)
-  def getIncrement(slug, id, queryable, toField), do: getLastIncrement(slug, id, queryable, toField) |> getIncrement
+  @spec getIncrement(
+          slug :: String.t(),
+          id :: integer(),
+          queryable :: Ecto.Queryable.t(),
+          to :: atom()
+        ) :: integer()
+  def getIncrement(slug, id, queryable, to \\ @incremental_slug.to_field)
+
+  def getIncrement(slug, id, queryable, to),
+    do: getLastIncrement(slug, id, queryable, to) |> getIncrement
 
   @doc false
   @spec getIncrement(lastIncrement :: integer()) :: integer()
@@ -364,7 +439,7 @@ defmodule Backend.IncrementalSlug do
   * `slug` - A regular slug without an increment.
   * `id` - Queryable item's ID. Required when looking if another item has the same slug.
   * `queryable` - Check the table to see if the generated slug is already taken.
-  * `toField` - In which changeset's field put the generated slug?
+  * `to` - In which changeset's field put the generated slug?
 
   ## Return value
 
@@ -394,9 +469,16 @@ defmodule Backend.IncrementalSlug do
       iex> IncrementalSlug.getLastIncrement("Some-title", nil, Post)
       1
   """
-  @spec getIncrement( slug :: String.t(), id :: integer(), queryable :: Ecto.Queryable.t(), toField :: atom() ) :: integer()
-  def getLastIncrement(slug, id, queryable, toField \\ @incremental_slug.to_field)
-  def getLastIncrement(slug, id, queryable, toField), do: find(slug, id, queryable, toField) |> getLastIncrement
+  @spec getIncrement(
+          slug :: String.t(),
+          id :: integer(),
+          queryable :: Ecto.Queryable.t(),
+          to :: atom()
+        ) :: integer()
+  def getLastIncrement(slug, id, queryable, to \\ @incremental_slug.to_field)
+
+  def getLastIncrement(slug, id, queryable, to),
+    do: find(slug, id, queryable, to) |> getLastIncrement
 
   @doc """
   Get the increment from a slug.
@@ -421,8 +503,7 @@ defmodule Backend.IncrementalSlug do
   """
   @spec getLastIncrement(slug | nil :: String.t()) :: integer
   def getLastIncrement(slug) when is_nil(slug), do: 0
-  def getLastIncrement(slug), do: slug |> String.split("-") |> List.last() |> String.to_integer
-
+  def getLastIncrement(slug), do: slug |> String.split("-") |> List.last() |> String.to_integer()
 
   @doc """
   Find the last item that has this slug (with or without an increment).
@@ -432,7 +513,7 @@ defmodule Backend.IncrementalSlug do
   * `slug` - A regular slug without an increment.
   * `id` - Queryable item's ID. Required when looking if another item has the same slug.
   * `queryable` - Check the table to see if the generated slug is already taken.
-  * `toField` - In which changeset's field put the generated slug?
+  * `to` - In which changeset's field put the generated slug?
 
   ## Return value
 
@@ -469,13 +550,21 @@ defmodule Backend.IncrementalSlug do
       iex> IncrementalSlug.find("Some-title", nil, Post)
       "Some-title-2"
   """
-  @spec find( slug :: String.t(), id :: integer(), queryable :: Ecto.Queryable.t(), toField :: atom() ) :: String.t() | nil
-  @spec find( slug :: nil, id :: integer(), queryable :: Ecto.Queryable.t(), toField :: atom() ) :: nil
-  @spec find( slug :: String.t(), id :: 0, queryable :: Ecto.Queryable.t(), toField :: atom() ) :: nil
-  @spec find( slug :: String.t(), id :: integer(), queryable :: nil, toField :: atom() ) :: nil
-  def find(slug, id, queryable, toField \\ @incremental_slug.to_field)
-  def find(slug, id, queryable, toField) when is_nil(slug) or id == 0 or is_nil(queryable), do: nil
-  def find(slug, id, queryable, toField), do: queryable |> selectField(toField) |> whereFieldWithIncrement(slug, toField) |> exlcudeSelf(id) |> findLast(toField)
+  @spec find(slug :: String.t(), id :: integer(), queryable :: Ecto.Queryable.t(), to :: atom()) ::
+          String.t() | nil
+  @spec find(slug :: nil, id :: integer(), queryable :: Ecto.Queryable.t(), to :: atom()) :: nil
+  @spec find(slug :: String.t(), id :: 0, queryable :: Ecto.Queryable.t(), to :: atom()) :: nil
+  @spec find(slug :: String.t(), id :: integer(), queryable :: nil, to :: atom()) :: nil
+  def find(slug, id, queryable, to \\ @incremental_slug.to_field)
+  def find(slug, id, queryable, to) when is_nil(slug) or id == 0 or is_nil(queryable), do: nil
+
+  def find(slug, id, queryable, to),
+    do:
+      queryable
+      |> selectField(to)
+      |> whereFieldWithIncrement(slug, to)
+      |> exlcudeSelf(id)
+      |> findLast(to)
 
   @doc """
   Specify the slug field in a query.
@@ -483,7 +572,7 @@ defmodule Backend.IncrementalSlug do
   ## Parameters
 
   * `queryable` - Check the table to see if the generated slug is already taken.
-  * `toField` - In which changeset's field put the generated slug?
+  * `to` - In which changeset's field put the generated slug?
 
   ## Return value
 
@@ -499,9 +588,9 @@ defmodule Backend.IncrementalSlug do
       iex> IncrementalSlug.selectField(Post, :uri)
       #Ecto.Query<from p in Backend.Blog.Post, select: p.uri>
   """
-  @spec selectField(queryable :: Ecto.Queryable.t(), toField :: atom()) :: Ecto.Query.t()
-  def selectField(queryable, toField \\ @incremental_slug.to_field)
-  def selectField(queryable, toField), do: queryable |> select([a], field(a, ^toField))
+  @spec selectField(queryable :: Ecto.Queryable.t(), to :: atom()) :: Ecto.Query.t()
+  def selectField(queryable, to \\ @incremental_slug.to_field)
+  def selectField(queryable, to), do: queryable |> select([a], field(a, ^to))
 
   @doc """
   Search for this slug that ends with '-' and exactly 1 character.
@@ -512,7 +601,7 @@ defmodule Backend.IncrementalSlug do
 
   * `queryable` - Any query - look for items or a count.
   * `slug` - A regular slug without an increment.
-  * `toField` - In which changeset's field put the generated slug?
+  * `to` - In which changeset's field put the generated slug?
 
   ## Return value
 
@@ -528,9 +617,12 @@ defmodule Backend.IncrementalSlug do
       iex> IncrementalSlug.whereFieldWithIncrement(Post, "Hello-there")
       #Ecto.Query<from p in Backend.Blog.Post, where: like(p.uri, ^"Hello-there-_")>
   """
-  @spec whereFieldWithIncrement(queryable :: Ecto.Queryable.t(), slug :: String.t(), atom() )  :: Ecto.Query.t()
-  def whereFieldWithIncrement(queryable, slug, toField \\ @incremental_slug.to_field)
-  def whereFieldWithIncrement(queryable, slug, toField), do: queryable |> where([a], like(field(a, ^toField), ^"#{slug}-_"))
+  @spec whereFieldWithIncrement(queryable :: Ecto.Queryable.t(), slug :: String.t(), atom()) ::
+          Ecto.Query.t()
+  def whereFieldWithIncrement(queryable, slug, to \\ @incremental_slug.to_field)
+
+  def whereFieldWithIncrement(queryable, slug, to),
+    do: queryable |> where([a], like(field(a, ^to), ^"#{slug}-_"))
 
   @doc """
   Add the query part that tells to take the last item which slug has the highest increment and return the item.
@@ -538,7 +630,7 @@ defmodule Backend.IncrementalSlug do
   ## Parameters
 
   * `queryable` - Any query - look for items or a count.
-  * `toField` - In which changeset's field put the generated slug?
+  * `to` - In which changeset's field put the generated slug?
 
   ## Return value
 
@@ -566,9 +658,9 @@ defmodule Backend.IncrementalSlug do
       iex> IncrementalSlug.findLast(Post)
       %Post{id: 3, slug: "Some-title-2"}
   """
-  @spec whereFieldWithIncrement(queryable :: Ecto.Queryable.t(), atom() )  :: Ecto.Schema.t() | nil
-  def findLast(queryable, toField \\ @incremental_slug.to_field)
-  def findLast(queryable, toField), do: queryable |> order_by(desc: ^toField) |> limit(1)  |> Repo.one
+  @spec whereFieldWithIncrement(queryable :: Ecto.Queryable.t(), atom()) :: Ecto.Schema.t() | nil
+  def findLast(queryable, to \\ @incremental_slug.to_field)
+  def findLast(queryable, to), do: queryable |> order_by(desc: ^to) |> limit(1) |> Repo.one()
 
   @doc """
   Put this slug into the selected changeset's field.
@@ -577,7 +669,7 @@ defmodule Backend.IncrementalSlug do
 
   * `slug` - A regular slug without an increment.
   * `changeset` - Take the value from a field, and put back the slug in another.
-  * `toField` - In which changeset's field put the generated slug?
+  * `to` - In which changeset's field put the generated slug?
 
   ## Examples
 
@@ -587,6 +679,8 @@ defmodule Backend.IncrementalSlug do
       iex> changeset2.changes
       %{title: "Some title", uri: "Some-slug"},
   """
-  @spec putSlug(slug :: String.t(), changeset :: Ecto.Changeset.t(), toField :: atom()) :: Ecto.Changeset.t()
-  def putSlug(slug, changeset, toField \\ @incremental_slug.to_field), do: changeset |> put_change(toField, slug)
+  @spec putSlug(slug :: String.t(), changeset :: Ecto.Changeset.t(), to :: atom()) ::
+          Ecto.Changeset.t()
+  def putSlug(slug, changeset, to \\ @incremental_slug.to_field),
+    do: changeset |> put_change(to, slug)
 end
