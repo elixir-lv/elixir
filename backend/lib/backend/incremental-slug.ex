@@ -1,14 +1,17 @@
 defmodule Backend.IncrementalSlug do
   @moduledoc """
-  Provide unique slugs by appending an increment if the slugs has already been used.
+  Store a unique slug.
 
-  ## Depends on
+  Append an increment (1-10), if this slug is already taken.
+
+   ## Depends on
 
   * [github.com/h4cc/slugger](https://github.com/h4cc/slugger)
 
-  ## Useful to know
+  ## Defaults
 
-  * Increment will grow from 1 to 10. See `IncrementalSlug.whereFieldWithIncrement\3`.
+  They are defined in `config :backend, incremental_slug: %{from_field: :title, to_field: :uri}` but
+  can be overwiiten on the fly when calling a method.
   """
 
   import Ecto.Query, warn: false
@@ -18,7 +21,7 @@ defmodule Backend.IncrementalSlug do
   @incremental_slug Application.get_env(:backend, :incremental_slug)
 
   @doc """
-  Append the increment to the string.
+  Append the increment to the slug.
 
       iex> "Some-title" |> Backend.IncrementalSlug.append(7)
       "Some-title-7"
@@ -30,17 +33,12 @@ defmodule Backend.IncrementalSlug do
   def append(slug, increment), do: "#{slug}-#{increment}"
 
   @doc """
-  Do not include the current item in the search, when looking for items that have used this slug.
+  Exclude this ID from the query.
 
   ## Parameters
 
   * `queryable` - Check the table to see if the generated slug is already taken.
   * `id` - Queryable item's ID. Required when looking if another item has the same slug.
-
-  ## Return value
-
-  If a valid ID has been passed, then will attach a `WHERE` clause that exccludes the ID from the search,
-  the query.
 
   ## Examples
 
@@ -50,18 +48,18 @@ defmodule Backend.IncrementalSlug do
       iex> query = Post |> select(count("*")) |> limit(1)
       #Ecto.Query<from p in Backend.Blog.Post, limit: 1, select: count("*")>
 
-      iex> IncrementalSlug.exlcudeSelf(query, nil)
+      iex> IncrementalSlug.exlcudeID(query, nil)
       #Ecto.Query<from p in Backend.Blog.Post, limit: 1, select: count("*")>
 
-      iex> IncrementalSlug.exlcudeSelf(query, 123)
+      iex> IncrementalSlug.exlcudeID(query, 123)
       #Ecto.Query<from p in Backend.Blog.Post, where: p.id != ^123, limit: 1,  select: count("*")>
   """
-  @spec exlcudeSelf(queryable :: Ecto.Queryable.t(), id :: integer()) :: Ecto.Query.t()
-  def exlcudeSelf(queryable, id) when is_nil(id), do: queryable
-  def exlcudeSelf(queryable, id), do: queryable |> where([a], a.id != ^id)
+  @spec exlcudeID(queryable :: Ecto.Queryable.t(), id :: integer()) :: Ecto.Query.t()
+  def exlcudeID(queryable, id) when is_nil(id), do: queryable
+  def exlcudeID(queryable, id), do: queryable |> where([a], a.id != ^id)
 
   @doc """
-  Find the last item that has this slug (with or without an increment).
+  Find the last item that has taken this slug (with or without an increment).
 
   ## Parameters
 
@@ -72,12 +70,12 @@ defmodule Backend.IncrementalSlug do
 
   ## Return value
 
-   Slug with an increment or `nil` of nothing was found. If there were multiple found, then the one with a highest increment
+   Slug with an increment or `nil` if nothing was found. If there were multiple found, then the one with the greatest increment
    will be returned.
 
   ## Useful to know
 
-  Highest increment that will be returned is 9, because the query looks for exactly 1 character after the '-' at the end of the slug.
+  Greatest increment that will be returned is 9 because the query looks for exactly 1 character after the '-' at the end of the slug.
   See `IncrementalSlug.whereFieldWithIncrement\3`.
 
   ## Examples
@@ -118,11 +116,11 @@ defmodule Backend.IncrementalSlug do
       queryable
       |> selectField(to)
       |> whereFieldWithIncrement(slug, to)
-      |> exlcudeSelf(id)
+      |> exlcudeID(id)
       |> findLast(to)
 
   @doc """
-  Add the query part that tells to take the last item which slug has the highest increment and return the item.
+  Find the last item.
 
   ## Parameters
 
@@ -155,12 +153,12 @@ defmodule Backend.IncrementalSlug do
       iex> IncrementalSlug.findLast(Post)
       %Post{id: 3, slug: "Some-title-2"}
   """
-  @spec whereFieldWithIncrement(queryable :: Ecto.Queryable.t(), atom()) :: Ecto.Schema.t() | nil
+  @spec findLast(queryable :: Ecto.Queryable.t(), atom()) :: Ecto.Schema.t() | nil
   def findLast(queryable, to \\ @incremental_slug.to_field)
   def findLast(queryable, to), do: queryable |> order_by(desc: ^to) |> limit(1) |> Repo.one()
 
   @doc """
-  Get the count of how many items haves used this exact slug.
+  Get the count of how many items have taken this exact slug.
 
   ## Parameters
 
@@ -202,11 +200,11 @@ defmodule Backend.IncrementalSlug do
       |> select(count("*"))
       |> limit(1)
       |> where([a], field(a, ^to) == ^slug)
-      |> exlcudeSelf(id)
+      |> exlcudeID(id)
       |> Repo.one()
 
   @doc """
-  Get the increment to add to the slug so it would be unique.
+  Find the increment for the slug so it would be unique.
 
   ## Parameters
 
@@ -217,11 +215,11 @@ defmodule Backend.IncrementalSlug do
 
   ## Return value
 
-  1 if this slug is not taken, othewrise the increment from the item that has taken it (highest increment, if multiple has taken) and + 1.
+  `1` if this slug is not taken, otherwise the increment from the item that has taken it (greatest increment, if multiple have taken) and adds `1`.
 
   ## Useful to know
 
-  Highest increment that will be returned is 10, because the query looks for exactly 1 character after the '-' at the end of the slug.
+  Highest increment that will be returned is 10 because the query looks for exactly 1 character after the '-' at the end of the slug.
   See `IncrementalSlug.whereFieldWithIncrement\3`.
 
   ## Examples
@@ -259,7 +257,7 @@ defmodule Backend.IncrementalSlug do
   defp getIncrement(lastIncrement), do: lastIncrement + 1
 
   @doc """
-  Get the increment from the last item with this slug. Like post-1 increment is 1.
+  Find the greatest increment from the items that have taken this slug.
 
   ## Parameters
 
@@ -270,7 +268,7 @@ defmodule Backend.IncrementalSlug do
 
   ## Return value
 
-  0 if this slug is not taken, othewrise the increment from the item that has taken it (highest increment, if multiple has taken).
+  0 if this slug is not taken, othewrise the increment from the item that has taken it (greatest increment, if multiple has taken).
 
   ## Useful to know
 
@@ -296,7 +294,7 @@ defmodule Backend.IncrementalSlug do
       iex> IncrementalSlug.getLastIncrement("Some-title", nil, Post)
       1
   """
-  @spec getIncrement(
+  @spec getLastIncrement(
           slug :: String.t(),
           id :: integer(),
           queryable :: Ecto.Queryable.t(),
@@ -352,7 +350,7 @@ defmodule Backend.IncrementalSlug do
   def getSlug(string), do: string |> String.trim() |> Slugger.slugify()
 
   @doc """
-  Get a unique slug by convertig the passed value (`from`).
+  Get a unique slug by convertig the passed value (from).
 
   ## Parameter
 
