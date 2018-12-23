@@ -98,7 +98,7 @@ defmodule Backend.BlogTest do
       assert true == IncrementalSlug.isTaken(uri, 999, Post)
       assert true == IncrementalSlug.isTaken(uri, nil, Post)
 
-      uri = uri = "Some-title-1-1";
+      uri = "Some-title-1-1";
       assert false == IncrementalSlug.isTaken(uri, nil, Post)
       assert {:ok, %Post{} = post} = Blog.create_post(%{title: "Some title 1"})
       assert post.uri == uri
@@ -106,7 +106,7 @@ defmodule Backend.BlogTest do
       assert true == IncrementalSlug.isTaken(uri, 999, Post)
       assert true == IncrementalSlug.isTaken(uri, nil, Post)
 
-      uri = uri = "Some-title-1-2";
+      uri = "Some-title-1-2";
       assert false == IncrementalSlug.isTaken(uri, nil, Post)
       assert {:ok, %Post{} = post} = Blog.create_post(%{title: "Some title 1"})
       assert post.uri == uri
@@ -114,7 +114,7 @@ defmodule Backend.BlogTest do
       assert true == IncrementalSlug.isTaken(uri, 999, Post)
       assert true == IncrementalSlug.isTaken(uri, nil, Post)
 
-      uri = uri = "Some-title-2-1";
+      uri = "Some-title-2-1";
       assert false == IncrementalSlug.isTaken(uri, nil, Post)
       assert {:ok, %Post{} = post} = Blog.create_post(%{title: "Some title 2"})
       assert post.uri == uri
@@ -122,7 +122,7 @@ defmodule Backend.BlogTest do
       assert true == IncrementalSlug.isTaken(uri, 999, Post)
       assert true == IncrementalSlug.isTaken(uri, nil, Post)
 
-      uri = uri = "Some-title-2-2";
+      uri = "Some-title-2-2";
       assert false == IncrementalSlug.isTaken(uri, nil, Post)
       assert {:ok, %Post{} = post} = Blog.create_post(%{title: "Some title 2"})
       assert post.uri == uri
@@ -130,7 +130,7 @@ defmodule Backend.BlogTest do
       assert true == IncrementalSlug.isTaken(uri, 999, Post)
       assert true == IncrementalSlug.isTaken(uri, nil, Post)
 
-      uri = uri = "Some-title-7";
+      uri = "Some-title-7";
       assert false == IncrementalSlug.isTaken(uri, nil, Post)
       assert {:ok, %Post{} = post} = Blog.create_post(%{title: "Some title 7"})
       assert post.uri == uri
@@ -138,7 +138,7 @@ defmodule Backend.BlogTest do
       assert true == IncrementalSlug.isTaken(uri, 999, Post)
       assert true == IncrementalSlug.isTaken(uri, nil, Post)
 
-      uri = uri = "Some-title-7-1";
+      uri = "Some-title-7-1";
       assert false == IncrementalSlug.isTaken(uri, nil, Post)
       assert {:ok, %Post{} = post} = Blog.create_post(%{title: "Some title 7"})
       assert post.uri == uri
