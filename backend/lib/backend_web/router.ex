@@ -13,6 +13,7 @@ defmodule BackendWeb.Router do
 
       scope "/blog", Blog do
         resources "/article", ArticleController, as: :blog_article
+        resources "/category", CategoryController, as: :blog_category
       end
   end
 
