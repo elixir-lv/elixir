@@ -1,7 +1,6 @@
-* Replace the uri field with slug.
-* What happens if the config is not set?
-* Write the use case.
 * Try elsewhere on a fresh project.
+* DocTests
+* Replace the uri field with slug.
 
 ## Use the slug in another module
 

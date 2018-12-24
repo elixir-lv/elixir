@@ -4,6 +4,10 @@ defmodule Backend.IncrementalSlug do
 
   Append an increment (1-10), if this slug is already taken.
 
+  ## Example
+
+  See `put/4`.
+
   ## Depends on
 
   * [github.com/h4cc/slugger](https://github.com/h4cc/slugger)
@@ -20,7 +24,7 @@ defmodule Backend.IncrementalSlug do
   import Ecto.Changeset
   alias Backend.Repo
 
-  @incremental_slug Application.get_env(:backend, :incremental_slug)
+  @incremental_slug Application.get_env(:backend, :incremental_slug, %{from_field: :title, to_field: :slug})
 
   @doc """
   Append the increment to the slug.
@@ -102,7 +106,7 @@ defmodule Backend.IncrementalSlug do
   @spec find(slug :: String.t(), id :: 0, queryable :: Ecto.Queryable.t(), to :: atom()) :: nil
   @spec find(slug :: String.t(), id :: integer(), queryable :: nil, to :: atom()) :: nil
   def find(slug, id, queryable, to \\ @incremental_slug.to_field)
-  def find(slug, id, queryable, to) when is_nil(slug) or id == 0 or is_nil(queryable), do: nil
+  def find(slug, id, queryable, _to) when is_nil(slug) or id == 0 or is_nil(queryable), do: nil
 
   def find(slug, id, queryable, to),
     do:
@@ -416,7 +420,7 @@ defmodule Backend.IncrementalSlug do
         ) :: String.t()
   def getUnique(string, id, queryable, to \\ @incremental_slug.to_field)
 
-  def getUnique(string, id, queryable, to) when is_nil(string) or id == 0 or is_nil(queryable),
+  def getUnique(string, id, queryable, _to) when is_nil(string) or id == 0 or is_nil(queryable),
     do: nil
 
   def getUnique(string, id, queryable, to),
@@ -452,7 +456,7 @@ defmodule Backend.IncrementalSlug do
           to :: atom()
         ) :: boolean()
   def isTaken(slug, id, queryable, to \\ @incremental_slug.to_field)
-  def isTaken(slug, id, queryable, to) when is_nil(slug) or id == 0 or is_nil(queryable), do: nil
+  def isTaken(slug, id, queryable, _to) when is_nil(slug) or id == 0 or is_nil(queryable), do: nil
   def isTaken(slug, id, queryable, to), do: getCount(slug, id, queryable, to) > 0
 
   @doc """
@@ -536,7 +540,7 @@ defmodule Backend.IncrementalSlug do
     slug |> append(increment)
   end
 
-  def makeSlugUniqueIfTaken(taken, slug, id, queryable, to), do: slug
+  def makeSlugUniqueIfTaken(_taken, slug, _id, _queryable, _to), do: slug
 
   @doc """
   Get a slug and put it in the changeset.
@@ -577,7 +581,7 @@ defmodule Backend.IncrementalSlug do
         to \\ @incremental_slug.to_field
       )
 
-  def put(changeset, queryable, from, to) when is_nil(changeset) or is_nil(queryable),
+  def put(changeset, queryable, _from, _to) when is_nil(changeset) or is_nil(queryable),
     do: changeset
 
   def put(changeset, queryable, from, to),
