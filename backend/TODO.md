@@ -1,3 +1,4 @@
+* Create categories.
 * Try elsewhere on a fresh project.
 * DocTests
 * Replace the uri field with slug.
@@ -6,6 +7,10 @@
 
 * Make sure it works as expected outside the Posts module.
 * When that is done, then move the incremental slugger to a separate repo or just to dev/Elixir.
+
+## Random
+
+* Soft delete.
 
 ## Posts
 

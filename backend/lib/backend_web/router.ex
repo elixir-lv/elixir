@@ -9,6 +9,12 @@ defmodule BackendWeb.Router do
 	scope "/api", BackendWeb do
 			pipe_through :api
 			resources "/users", UserController
-			resources "/posts", PostController
-	end
+      resources "/posts", PostController
+
+      scope "/blog", Blog do
+        resources "/article", ArticleController, as: :blog_article
+      end
+  end
+
+
 end
