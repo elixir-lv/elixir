@@ -1,5 +1,8 @@
-* Create categories.
-* Try elsewhere on a fresh project.
+* Try elsewhere on a fresh project with postgre.
+* prepare hex.
+* create logo and descr for github.
+* put into github.
+* hex.
 * DocTests
 * Replace the uri field with slug.
 
