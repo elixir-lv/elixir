@@ -1,3 +1,6 @@
+* Rename camelCases to snake_case.
+* test user schema test/test_helper.exs
+* Change "Some title"' to "Slug Doe".
 * Try elsewhere on a fresh project with postgre.
 * prepare hex.
 * create logo and descr for github.

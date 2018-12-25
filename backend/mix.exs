@@ -41,7 +41,8 @@ defmodule Backend.Mixfile do
       {:cowboy, "~> 1.0"},
       {:cors_plug, "~> 1.5"},
       {:slugger, "~> 0.3"},
-      {:ex_doc, "~> 0.19", only: :dev, runtime: false}
+      {:ex_doc, "~> 0.19", only: :dev, runtime: false},
+      {:incremental_slug, path: "my_deps/incremental_slug"}
     ]
   end
 

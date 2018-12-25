@@ -1,0 +1,3 @@
+%{
+  "slugger": {:hex, :slugger, "0.3.0", "efc667ab99eee19a48913ccf3d038b1fb9f165fa4fbf093be898b8099e61b6ed", [:mix], [], "hexpm"},
+}
