@@ -26,7 +26,7 @@ defmodule Backend.IncrementalSlug do
 
   @incremental_slug Application.get_env(:backend, :incremental_slug, %{from_field: :title, to_field: :slug})
 
-  @doc """
+  @doc ~S"""
   Append the increment to the slug.
 
       iex> "Some-title" |> Backend.IncrementalSlug.append(7)
@@ -38,7 +38,7 @@ defmodule Backend.IncrementalSlug do
   @spec append(slug :: String.t(), increment :: integer) :: String.t()
   def append(slug, increment), do: "#{slug}-#{increment}"
 
-  @doc """
+  @doc ~S"""
   Exclude this ID from the query.
 
   ## Examples
@@ -59,7 +59,7 @@ defmodule Backend.IncrementalSlug do
   def exlcudeID(queryable, id) when is_nil(id), do: queryable
   def exlcudeID(queryable, id), do: queryable |> where([a], a.id != ^id)
 
-  @doc """
+  @doc ~S"""
   Find the taken slug in the database. It may contain an increment.
 
   ## Parameters
@@ -116,7 +116,7 @@ defmodule Backend.IncrementalSlug do
       |> exlcudeID(id)
       |> findItemWithGreatestIncrement(to)
 
-  @doc """
+  @doc ~S"""
   Find the item that has the slug with a greatest increment.
 
   ## Parameters
@@ -153,7 +153,7 @@ defmodule Backend.IncrementalSlug do
   def findItemWithGreatestIncrement(queryable, to),
     do: queryable |> order_by(desc: ^to) |> limit(1) |> Repo.one()
 
-  @doc """
+  @doc ~S"""
   Get a count of how many items have taken this exact slug.
 
   ## Parameters
@@ -199,7 +199,7 @@ defmodule Backend.IncrementalSlug do
       |> exlcudeID(id)
       |> Repo.one()
 
-  @doc """
+  @doc ~S"""
   Find the greatest increment from the items that have taken this slug.
 
   ## Parameters
@@ -247,7 +247,7 @@ defmodule Backend.IncrementalSlug do
   def getGreatestIncrement(slug, id, queryable, to),
     do: find(slug, id, queryable, to) |> getGreatestIncrement
 
-  @doc """
+  @doc ~S"""
   Extract an increment from the slug.
 
   ## Parameters
@@ -274,7 +274,7 @@ defmodule Backend.IncrementalSlug do
   def getGreatestIncrement(slug),
     do: slug |> String.split("-") |> List.last() |> String.to_integer()
 
-  @doc """
+  @doc ~S"""
   Find an increment that can make this slug unique.
 
   ## Parameters
@@ -326,7 +326,7 @@ defmodule Backend.IncrementalSlug do
   @spec getIncrement(lastIncrement :: integer()) :: integer()
   defp getIncrement(lastIncrement), do: lastIncrement + 1
 
-  @doc """
+  @doc ~S"""
   Get a slug from the passed string.
 
   Trim and pass it to [`Slugger.slugify/2`](https://github.com/h4cc/slugger)
@@ -345,7 +345,7 @@ defmodule Backend.IncrementalSlug do
   @spec getSlug(string :: String.t()) :: String.t()
   def getSlug(string), do: string |> String.trim() |> Slugger.slugify()
 
-  @doc """
+  @doc ~S"""
   Get a unique slug from the selected changeset's field.
 
   ## Parameter
@@ -385,7 +385,7 @@ defmodule Backend.IncrementalSlug do
   def getSlugFromField(changeset, queryable, from, to),
     do: get_change(changeset, from) |> getUnique(get_change(changeset, :id), queryable, to)
 
-  @doc """
+  @doc ~S"""
   Get a unique slug from a string.
 
   ## Parameter
@@ -426,7 +426,7 @@ defmodule Backend.IncrementalSlug do
   def getUnique(string, id, queryable, to),
     do: string |> getSlug |> makeSlugUnique(id, queryable, to)
 
-  @doc """
+  @doc ~S"""
   Check if another item has taken this slug.
 
   ## Parameters
@@ -459,7 +459,7 @@ defmodule Backend.IncrementalSlug do
   def isTaken(slug, id, queryable, _to) when is_nil(slug) or id == 0 or is_nil(queryable), do: nil
   def isTaken(slug, id, queryable, to), do: getCount(slug, id, queryable, to) > 0
 
-  @doc """
+  @doc ~S"""
   Append an increment (1-10), if this slug is already taken.
 
   ## Parameters
@@ -493,7 +493,7 @@ defmodule Backend.IncrementalSlug do
   def makeSlugUnique(slug, id, queryable, to),
     do: isTaken(slug, id, queryable, to) |> makeSlugUniqueIfTaken(slug, id, queryable, to)
 
-  @doc """
+  @doc ~S"""
   Append an increment (1-10), if this slug is already taken.
 
   ## Parameters
@@ -542,7 +542,7 @@ defmodule Backend.IncrementalSlug do
 
   def makeSlugUniqueIfTaken(_taken, slug, _id, _queryable, _to), do: slug
 
-  @doc """
+  @doc ~S"""
   Get a slug and put it in the changeset.
 
   ## Parameter
@@ -587,7 +587,7 @@ defmodule Backend.IncrementalSlug do
   def put(changeset, queryable, from, to),
     do: getSlugFromField(changeset, queryable, from, to) |> putSlug(changeset, to)
 
-  @doc """
+  @doc ~S"""
   Put this slug into the selected changeset's field.
 
   ## Parameters
@@ -609,7 +609,7 @@ defmodule Backend.IncrementalSlug do
   def putSlug(slug, changeset, to \\ @incremental_slug.to_field),
     do: changeset |> put_change(to, slug)
 
-  @doc """
+  @doc ~S"""
   Specify the field where to look for a slug in a query.
 
   ## Parameters
@@ -635,7 +635,7 @@ defmodule Backend.IncrementalSlug do
   def selectField(queryable, to \\ @incremental_slug.to_field)
   def selectField(queryable, to), do: queryable |> select([a], field(a, ^to))
 
-  @doc """
+  @doc ~S"""
   Search for slugs that start just like this one and end with '-' and exactly 1 character.
 
   * [MySQL pattern matching](https://dev.mysql.com/doc/refman/8.0/en/pattern-matching.htm)
