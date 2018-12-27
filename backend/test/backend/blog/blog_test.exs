@@ -2,7 +2,6 @@ defmodule Backend.BlogTest do
   use Backend.DataCase
 
   alias Backend.Blog
-  alias Backend.IncrementalSlug
 
   describe "posts" do
     alias Backend.Blog.Post

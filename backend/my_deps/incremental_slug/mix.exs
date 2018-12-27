@@ -21,6 +21,7 @@ defmodule IncrementalSlug.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      {:ecto, ">= 2.2.0"},
       {:slugger, "~> 0.3"},
     ]
   end

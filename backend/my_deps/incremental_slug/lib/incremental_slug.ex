@@ -2,6 +2,12 @@ defmodule IncrementalSlug do
 
   import Ecto.Query, warn: false
   import Ecto.Changeset
+
+
+  def repo() do
+    Application.get_env(:incremental_slug, :repo)
+  end
+
   # alias IncrementalSlug.Repo
 
   # def repo() do
@@ -30,7 +36,7 @@ defmodule IncrementalSlug do
   """
 
   @incremental_slug Application.get_env(:incremental_slug, :fields, %{from: :title, to: :slug})
-  @repo Application.get_env(:incremental_slug, :repo)
+  # @repo Application.get_env(:incremental_slug, :repo)
 
   @doc ~S"""
   Append the increment to the slug.
@@ -158,7 +164,7 @@ defmodule IncrementalSlug do
   def findItemWithGreatestIncrement(queryable, to \\ @incremental_slug.to)
 
   def findItemWithGreatestIncrement(queryable, to),
-      do: queryable |> order_by(desc: ^to) |> limit(1) |> @repo.one()
+      do: queryable |> order_by(desc: ^to) |> limit(1) |> repo().one()
 
   @doc ~S"""
   Get a count of how many items have taken this exact slug.
@@ -204,7 +210,7 @@ defmodule IncrementalSlug do
       |> limit(1)
       |> where([a], field(a, ^to) == ^slug)
       |> exlcudeID(id)
-      |> @repo.one()
+      |> repo().one()
 
   @doc ~S"""
   Find the greatest increment from the items that have taken this slug.

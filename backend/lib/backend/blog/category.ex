@@ -17,7 +17,7 @@ defmodule Backend.Blog.Category do
   def changeset(item, attrs) do
     item
     |> cast(attrs, [:title, :slug, :img, :rating, :text])
-    |> Backend.IncrementalSlug.put(__MODULE__, :title, :slug)
+    |> IncrementalSlug.put(__MODULE__, :title, :slug)
     |> validate_required([:title, :slug])
   end
 end
