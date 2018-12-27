@@ -3,17 +3,6 @@ defmodule IncrementalSlug do
   import Ecto.Query, warn: false
   import Ecto.Changeset
 
-
-  def repo() do
-    Application.get_env(:incremental_slug, :repo)
-  end
-
-  # alias IncrementalSlug.Repo
-
-  # def repo() do
-  #   Application.get_env(:incremental_slug, :repo)
-  # end
-
   @moduledoc """
   Store a unique slug.
 
@@ -41,11 +30,11 @@ defmodule IncrementalSlug do
   @doc ~S"""
   Append the increment to the slug.
 
-      iex> "Some-title" |> IncrementalSlug.append(7)
-      "Some-title-7"
+      iex> "Slug-Doe" |> IncrementalSlug.append(7)
+      "Slug-Doe-7"
 
-      iex> "Hey" |> IncrementalSlug.append(123)
-      "Hey-123"
+      iex> "Henry" |> IncrementalSlug.append(123)
+      "Henry-123"
   """
   @spec append(slug :: String.t(), increment :: integer) :: String.t()
   def append(slug, increment), do: "#{slug}-#{increment}"
@@ -92,26 +81,26 @@ defmodule IncrementalSlug do
 
       iex> alias {Blog.Post, IncrementalSlug, Repo}
 
-      iex> IncrementalSlug.find("Some-title", nil, Post)
+      iex> IncrementalSlug.find("Slug-Doe", nil, Post)
       nil
 
-      iex> Post.changeset(%Post{}, %{title: "Some title"}) |> Repo.insert!()
-      %Post{id: 1, title: "Some title", slug: "Some-title"}
+      iex> Post.changeset(%Post{}, %{title: "Slug Doe"}) |> Repo.insert!()
+      %Post{id: 1, title: "Slug Doe", slug: "Slug-Doe"}
 
-      iex> IncrementalSlug.find("Some-title", nil, Post)
+      iex> IncrementalSlug.find("Slug-Doe", nil, Post)
       nil
 
-      iex> Post.changeset(%Post{}, %{title: "Some title"}) |> Repo.insert!()
-      %Post{id: 2, title: "Some title", slug: "Some-title-1"}
+      iex> Post.changeset(%Post{}, %{title: "Slug Doe"}) |> Repo.insert!()
+      %Post{id: 2, title: "Slug Doe", slug: "Slug-Doe-1"}
 
-      iex> IncrementalSlug.find("Some-title", nil, Post)
-      "Some-title-1"
+      iex> IncrementalSlug.find("Slug-Doe", nil, Post)
+      "Slug-Doe-1"
 
-      iex> Post.changeset(%Post{}, %{title: "Some title"}) |> Repo.insert!()
-      %Post{id: 3, title: "Some title", slug: "Some-title-2"}
+      iex> Post.changeset(%Post{}, %{title: "Slug Doe"}) |> Repo.insert!()
+      %Post{id: 3, title: "Slug Doe", slug: "Slug-Doe-2"}
 
-      iex> IncrementalSlug.find("Some-title", nil, Post)
-      "Some-title-2"
+      iex> IncrementalSlug.find("Slug-Doe", nil, Post)
+      "Slug-Doe-2"
   """
   @spec find(slug :: String.t(), id :: integer(), queryable :: Ecto.Queryable.t(), to :: atom()) ::
           String.t() | nil
@@ -144,20 +133,20 @@ defmodule IncrementalSlug do
       iex> IncrementalSlug.findItemWithGreatestIncrement(Post)
       nil
 
-      iex> Post.changeset(%Post{}, %{title: "Some title"}) |> Repo.insert!()
-      %Post{id: 1, slug: "Some-title"}
+      iex> Post.changeset(%Post{}, %{title: "Slug Doe"}) |> Repo.insert!()
+      %Post{id: 1, slug: "Slug-Doe"}
 
       iex> IncrementalSlug.findItemWithGreatestIncrement(Post)
-      %Post{id: 1, slug: "Some-title"}
+      %Post{id: 1, slug: "Slug-Doe"}
 
-      iex> Post.changeset(%Post{}, %{title: "Some title"}) |> Repo.insert!()
-      %Post{id: 2, slug: "Some-title-1"}
+      iex> Post.changeset(%Post{}, %{title: "Slug Doe"}) |> Repo.insert!()
+      %Post{id: 2, slug: "Slug-Doe-1"}
 
-      iex> Post.changeset(%Post{}, %{title: "Some title"}) |> Repo.insert!()
-      %Post{id: 3, slug: "Some-title-2"}
+      iex> Post.changeset(%Post{}, %{title: "Slug Doe"}) |> Repo.insert!()
+      %Post{id: 3, slug: "Slug-Doe-2"}
 
       iex> IncrementalSlug.findItemWithGreatestIncrement(Post)
-      %Post{id: 3, slug: "Some-title-2"}
+      %Post{id: 3, slug: "Slug-Doe-2"}
   """
   @spec findItemWithGreatestIncrement(queryable :: Ecto.Queryable.t(), atom()) ::
           Ecto.Schema.t() | nil
@@ -180,19 +169,19 @@ defmodule IncrementalSlug do
 
       iex> alias {Blog.Post, IncrementalSlug, Repo}
 
-      iex> IncrementalSlug.getCount("Some-title", nil, Post)
+      iex> IncrementalSlug.getCount("Slug-Doe", nil, Post)
       0
 
-      iex> Post.changeset(%Post{}, %{title: "Some title"}) |> Repo.insert!()
-      %Post{id: 1, title: "Some title", slug: "Some-title"}
+      iex> Post.changeset(%Post{}, %{title: "Slug Doe"}) |> Repo.insert!()
+      %Post{id: 1, title: "Slug Doe", slug: "Slug-Doe"}
 
-      iex> IncrementalSlug.getCount("Some-title", nil, Post)
+      iex> IncrementalSlug.getCount("Slug-Doe", nil, Post)
       1
 
-      iex> Post.changeset(%Post{}, %{title: "Some title"}) |> Repo.insert!()
-      %Post{id: 2, title: "Some title", slug: "Some-title-1"}
+      iex> Post.changeset(%Post{}, %{title: "Slug Doe"}) |> Repo.insert!()
+      %Post{id: 2, title: "Slug Doe", slug: "Slug-Doe-1"}
 
-      iex> IncrementalSlug.getCount("Some-title", nil, Post)
+      iex> IncrementalSlug.getCount("Slug-Doe", nil, Post)
       1
   """
   @spec getCount(
@@ -234,19 +223,19 @@ defmodule IncrementalSlug do
 
       iex> alias {Blog.Post, IncrementalSlug, Repo}
 
-      iex> IncrementalSlug.getGreatestIncrement("Some-title", nil, Post)
+      iex> IncrementalSlug.getGreatestIncrement("Slug-Doe", nil, Post)
       0
 
-      iex> Post.changeset(%Post{}, %{title: "Some title"}) |> Repo.insert!()
-      %Post{id: 1, title: "Some title", slug: "Some-title"}
+      iex> Post.changeset(%Post{}, %{title: "Slug Doe"}) |> Repo.insert!()
+      %Post{id: 1, title: "Slug Doe", slug: "Slug-Doe"}
 
-      iex> IncrementalSlug.getGreatestIncrement("Some-title", nil, Post)
+      iex> IncrementalSlug.getGreatestIncrement("Slug-Doe", nil, Post)
       0
 
-      iex> Post.changeset(%Post{}, %{title: "Some title"}) |> Repo.insert!()
-      %Post{id: 2, title: "Some title", slug: "Some-title-1"}
+      iex> Post.changeset(%Post{}, %{title: "Slug Doe"}) |> Repo.insert!()
+      %Post{id: 2, title: "Slug Doe", slug: "Slug-Doe-1"}
 
-      iex> IncrementalSlug.getGreatestIncrement("Some-title", nil, Post)
+      iex> IncrementalSlug.getGreatestIncrement("Slug-Doe", nil, Post)
       1
   """
   @spec getGreatestIncrement(
@@ -276,9 +265,9 @@ defmodule IncrementalSlug do
       iex> alias IncrementalSlug
       iex> IncrementalSlug.getGreatestIncrement(nil)
       0
-      iex> IncrementalSlug.getGreatestIncrement("Some-title-1")
+      iex> IncrementalSlug.getGreatestIncrement("Slug-Doe-1")
       1
-      iex> IncrementalSlug.getGreatestIncrement("Some-title-5")
+      iex> IncrementalSlug.getGreatestIncrement("Slug-Doe-5")
       5
   """
   @spec getGreatestIncrement(slug | nil :: String.t()) :: integer
@@ -309,19 +298,19 @@ defmodule IncrementalSlug do
 
       iex> alias {Blog.Post, IncrementalSlug, Repo}
 
-      iex> IncrementalSlug.getIncrement("Some-title", nil, Post)
+      iex> IncrementalSlug.getIncrement("Slug-Doe", nil, Post)
       1
 
-      iex> Post.changeset(%Post{}, %{title: "Some title"}) |> Repo.insert!()
-      %Post{id: 1, title: "Some title", slug: "Some-title"}
+      iex> Post.changeset(%Post{}, %{title: "Slug Doe"}) |> Repo.insert!()
+      %Post{id: 1, title: "Slug Doe", slug: "Slug-Doe"}
 
-      iex> IncrementalSlug.getIncrement("Some-title", nil, Post)
+      iex> IncrementalSlug.getIncrement("Slug-Doe", nil, Post)
       1
 
-      iex> Post.changeset(%Post{}, %{title: "Some title"}) |> Repo.insert!()
-      %Post{id: 2, title: "Some title", slug: "Some-title-1"}
+      iex> Post.changeset(%Post{}, %{title: "Slug Doe"}) |> Repo.insert!()
+      %Post{id: 2, title: "Slug Doe", slug: "Slug-Doe-1"}
 
-      iex> IncrementalSlug.getIncrement("Some-title", nil, Post)
+      iex> IncrementalSlug.getIncrement("Slug-Doe", nil, Post)
       2
   """
   @spec getIncrement(
@@ -346,8 +335,8 @@ defmodule IncrementalSlug do
 
   ## Examples
 
-      iex> IncrementalSlug.getSlug("Some title")
-      "Some-title"
+      iex> IncrementalSlug.getSlug("Slug Doe")
+      "Slug-Doe"
 
       iex> IncrementalSlug.getSlug(" z e ā Č Ф А - Б В Г	Д š \ / * ^ % ! + ) |")
       "z-e-a-C-F-A-B-V-GD-s-or"
@@ -372,15 +361,15 @@ defmodule IncrementalSlug do
 
       iex> alias {Blog.Post, IncrementalSlug, Repo}
 
-      iex> changeset = Post.changeset(%Post{}, %{title: "Some title"})
+      iex> changeset = Post.changeset(%Post{}, %{title: "Slug Doe"})
       iex> changeset |> IncrementalSlug.getSlugFromField(Post)
-      "Some-title"
+      "Slug-Doe"
 
       iex> post = changeset |> Repo.insert!()
-      %Post{id: 1, title: "Some title", slug: "Some-title"}
+      %Post{id: 1, title: "Slug Doe", slug: "Slug-Doe"}
 
       iex> changeset |> IncrementalSlug.getSlugFromField(Post)
-      "Some-title-1"
+      "Slug-Doe-1"
   """
   @spec getSlugFromField(
           changeset :: Ecto.Changeset.t(),
@@ -416,14 +405,14 @@ defmodule IncrementalSlug do
 
       iex> alias {Blog.Post, IncrementalSlug, Repo}
 
-      iex> IncrementalSlug.getUnique("Some title", nil, Post)
-      "Some-title"
+      iex> IncrementalSlug.getUnique("Slug Doe", nil, Post)
+      "Slug-Doe"
 
-      iex> Post.changeset(%Post{}, %{title: "Some title"}) |> Repo.insert!()
-      %Post{id: 1, title: "Some title", slug: "Some-title"}
+      iex> Post.changeset(%Post{}, %{title: "Slug Doe"}) |> Repo.insert!()
+      %Post{id: 1, title: "Slug Doe", slug: "Slug-Doe"}
 
-      iex> IncrementalSlug.getUnique("Some title", nil, %Post{})
-      "Some-title-1"
+      iex> IncrementalSlug.getUnique("Slug Doe", nil, %Post{})
+      "Slug-Doe-1"
   """
   @spec getUnique(
           string :: String.t(),
@@ -453,13 +442,13 @@ defmodule IncrementalSlug do
 
       iex> alias {Blog.Post, IncrementalSlug, Repo}
 
-      iex> IncrementalSlug.isTaken("Some-title", nil, Post)
+      iex> IncrementalSlug.isTaken("Slug-Doe", nil, Post)
       false
 
-      iex> Post.changeset(%Post{}, %{title: "Some title"}) |> Repo.insert!()
-      %Post{id: 1, title: "Some title", slug: "Some-title"}
+      iex> Post.changeset(%Post{}, %{title: "Slug Doe"}) |> Repo.insert!()
+      %Post{id: 1, title: "Slug Doe", slug: "Slug-Doe"}
 
-      iex> IncrementalSlug.isTaken("Some-title", nil, Post)
+      iex> IncrementalSlug.isTaken("Slug-Doe", nil, Post)
       true
   """
   @spec isTaken(
@@ -486,14 +475,14 @@ defmodule IncrementalSlug do
 
       iex> alias {Blog.Post, IncrementalSlug, Repo}
 
-      iex> IncrementalSlug.makeSlugUnique("Some-title", nil, Post)
-      "Some-title"
+      iex> IncrementalSlug.makeSlugUnique("Slug-Doe", nil, Post)
+      "Slug-Doe"
 
-      iex> Post.changeset(%Post{}, %{title: "Some title"}) |> Repo.insert!()
-      %Post{id: 1, title: "Some title", slug: "Some-title"}
+      iex> Post.changeset(%Post{}, %{title: "Slug Doe"}) |> Repo.insert!()
+      %Post{id: 1, title: "Slug Doe", slug: "Slug-Doe"}
 
-      iex> IncrementalSlug.makeSlugUnique("Some-title", nil, Post)
-      "Some-title-1"
+      iex> IncrementalSlug.makeSlugUnique("Slug-Doe", nil, Post)
+      "Slug-Doe-1"
   """
   @spec makeSlugUnique(
           slug :: String.t(),
@@ -521,23 +510,23 @@ defmodule IncrementalSlug do
 
       iex> alias {Blog.Post, IncrementalSlug, Repo}
 
-      iex> IncrementalSlug.makeSlugUniqueIfTaken(false, "Some-title", nil, Post)
-      "Some-title"
+      iex> IncrementalSlug.makeSlugUniqueIfTaken(false, "Slug-Doe", nil, Post)
+      "Slug-Doe"
 
-      iex> Post.changeset(%Post{}, %{title: "Some title"}) |> Repo.insert!()
-      %Post{id: 1, title: "Some title", slug: "Some-title"}
+      iex> Post.changeset(%Post{}, %{title: "Slug Doe"}) |> Repo.insert!()
+      %Post{id: 1, title: "Slug Doe", slug: "Slug-Doe"}
 
-      iex>  IncrementalSlug.makeSlugUniqueIfTaken(false, "Some-title", nil, Post)
-      "Some-title"
+      iex>  IncrementalSlug.makeSlugUniqueIfTaken(false, "Slug-Doe", nil, Post)
+      "Slug-Doe"
 
-      iex>  IncrementalSlug.makeSlugUniqueIfTaken(true, "Some-title", nil, Post)
-      "Some-title-1"
+      iex>  IncrementalSlug.makeSlugUniqueIfTaken(true, "Slug-Doe", nil, Post)
+      "Slug-Doe-1"
 
-      iex> Post.changeset(%Post{}, %{title: "Some title"}) |> Repo.insert!()
-      %Post{id: 2, title: "Some title", slug: "Some-title-1"}
+      iex> Post.changeset(%Post{}, %{title: "Slug Doe"}) |> Repo.insert!()
+      %Post{id: 2, title: "Slug Doe", slug: "Slug-Doe-1"}
 
-      iex>  IncrementalSlug.makeSlugUniqueIfTaken(true, "Some-title", nil, Post)
-      "Some-title-2"
+      iex>  IncrementalSlug.makeSlugUniqueIfTaken(true, "Slug-Doe", nil, Post)
+      "Slug-Doe-2"
   """
   @spec makeSlugUniqueIfTaken(
           taken :: boolean(),
@@ -573,13 +562,13 @@ defmodule IncrementalSlug do
 
       iex> alias {Blog.Post, IncrementalSlug, Repo}
 
-      iex> changeset = Post.changeset(%Post{}, %{title: "Some title"}) |> IncrementalSlug.put(Post)
+      iex> changeset = Post.changeset(%Post{}, %{title: "Slug Doe"}) |> IncrementalSlug.put(Post)
       iex> post = changeset |> Repo.insert!()
-      %Post{id: 1, title: "Some title", slug: "Some-title"}
+      %Post{id: 1, title: "Slug Doe", slug: "Slug-Doe"}
 
-      iex> changeset2 = Post.changeset(%Post{}, %{title: "Some title"}) |> IncrementalSlug.put(Post)
+      iex> changeset2 = Post.changeset(%Post{}, %{title: "Slug Doe"}) |> IncrementalSlug.put(Post)
       iex> post2 = changeset2 |> Repo.insert!()
-      %Post{id: 2, title: "Some title", slug: "Some-title-1"}
+      %Post{id: 2, title: "Slug Doe", slug: "Slug-Doe-1"}
   """
   @spec put(
           changeset :: Ecto.Changeset.t() | nil,
@@ -612,15 +601,24 @@ defmodule IncrementalSlug do
   ## Examples
 
       iex> alias {Blog.Post, IncrementalSlug, Repo}
-      iex> changeset = Post.changeset(%Post{}, %{title: "Some title"})
-      iex> changeset2 = "Some-slug" |> IncrementalSlug.putSlug(changeset)
+      iex> changeset = Post.changeset(%Post{}, %{title: "Slug Doe"})
+      iex> changeset2 = "Slug-Doe" |> IncrementalSlug.putSlug(changeset)
       iex> changeset2.changes
-      %{title: "Some title", uri: "Some-slug"},
+      %{title: "Slug Doe", uri: "Slug-Doe"},
   """
   @spec putSlug(slug :: String.t(), changeset :: Ecto.Changeset.t(), to :: atom()) ::
           Ecto.Changeset.t()
   def putSlug(slug, changeset, to \\ @incremental_slug.to),
     do: changeset |> put_change(to, slug)
+
+  @doc ~S"""
+  Connect to the project's repository.
+
+  Required to collect data from the table like using `Repo.one()`.
+  """
+  def repo() do
+    Application.get_env(:incremental_slug, :repo)
+  end
 
   @doc ~S"""
   Specify the field where to look for a slug in a query.
@@ -668,11 +666,11 @@ defmodule IncrementalSlug do
 
       iex> alias {Blog.Post, IncrementalSlug}
 
-      iex> IncrementalSlug.whereSlugWithIncrement(Post, "Some-title")
-      #Ecto.Query<from p in Blog.Post, where: like(p.uri, ^"Some-title-_")>
+      iex> IncrementalSlug.whereSlugWithIncrement(Post, "Slug-Doe")
+      #Ecto.Query<from p in Blog.Post, where: like(p.uri, ^"Slug-Doe-_")>
 
-      iex> IncrementalSlug.whereSlugWithIncrement(Post, "Hello-there")
-      #Ecto.Query<from p in Blog.Post, where: like(p.uri, ^"Hello-there-_")>
+      iex> IncrementalSlug.whereSlugWithIncrement(Post, "Henry")
+      #Ecto.Query<from p in Blog.Post, where: like(p.uri, ^"Henry-_")>
   """
   @spec whereSlugWithIncrement(queryable :: Ecto.Queryable.t(), slug :: String.t(), atom()) ::
           Ecto.Query.t()
