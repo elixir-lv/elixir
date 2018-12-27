@@ -29,6 +29,7 @@ config :slugger, replacement_file: "lib/replacements.exs"
 
 config :backend, incremental_slug: %{from_field: :title, to_field: :uri}
 
+config :incremental_slug, repo: Backend.Repo
 config :incremental_slug, fields: %{from: :title, to: :uri}
 
 # Import environment specific config. This must remain at the bottom
