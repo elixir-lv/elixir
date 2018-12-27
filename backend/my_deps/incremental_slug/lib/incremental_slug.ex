@@ -158,7 +158,7 @@ defmodule IncrementalSlug do
   def findItemWithGreatestIncrement(queryable, to \\ @incremental_slug.to)
 
   def findItemWithGreatestIncrement(queryable, to),
-    do: queryable |> order_by(desc: ^to) |> limit(1) |> @repo.one()
+      do: queryable |> order_by(desc: ^to) |> limit(1) |> @repo.one()
 
   @doc ~S"""
   Get a count of how many items have taken this exact slug.
@@ -376,21 +376,21 @@ defmodule IncrementalSlug do
       iex> changeset |> IncrementalSlug.getSlugFromField(Post)
       "Some-title-1"
   """
-  # @spec getSlugFromField(
-  #         changeset :: Ecto.Changeset.t(),
-  #         queryable :: Ecto.Queryable.t(),
-  #         from :: atom(),
-  #         to :: atom()
-  #       ) :: String.t()
-  # def getSlugFromField(
-  #       changeset,
-  #       queryable,
-  #       from \\ @incremental_slug.from,
-  #       to \\ @incremental_slug.to
-  #     )
+  @spec getSlugFromField(
+          changeset :: Ecto.Changeset.t(),
+          queryable :: Ecto.Queryable.t(),
+          from :: atom(),
+          to :: atom()
+        ) :: String.t()
+  def getSlugFromField(
+        changeset,
+        queryable,
+        from \\ @incremental_slug.from,
+        to \\ @incremental_slug.to
+      )
 
-  # def getSlugFromField(changeset, queryable, from, to),
-  #   do: get_change(changeset, from) |> getUnique(get_change(changeset, :id), queryable, to)
+  def getSlugFromField(changeset, queryable, from, to),
+    do: get_change(changeset, from) |> getUnique(get_change(changeset, :id), queryable, to)
 
   @doc ~S"""
   Get a unique slug from a string.
@@ -419,19 +419,19 @@ defmodule IncrementalSlug do
       iex> IncrementalSlug.getUnique("Some title", nil, %Post{})
       "Some-title-1"
   """
-  # @spec getUnique(
-  #         string :: String.t(),
-  #         id :: integer(),
-  #         queryable :: Ecto.Queryable.t(),
-  #         to :: atom()
-  #       ) :: String.t()
-  # def getUnique(string, id, queryable, to \\ @incremental_slug.to)
+  @spec getUnique(
+          string :: String.t(),
+          id :: integer(),
+          queryable :: Ecto.Queryable.t(),
+          to :: atom()
+        ) :: String.t()
+  def getUnique(string, id, queryable, to \\ @incremental_slug.to)
 
-  # def getUnique(string, id, queryable, _to) when is_nil(string) or id == 0 or is_nil(queryable),
-  #   do: nil
+  def getUnique(string, id, queryable, _to) when is_nil(string) or id == 0 or is_nil(queryable),
+    do: nil
 
-  # def getUnique(string, id, queryable, to),
-  #   do: string |> getSlug |> makeSlugUnique(id, queryable, to)
+  def getUnique(string, id, queryable, to),
+    do: string |> getSlug |> makeSlugUnique(id, queryable, to)
 
   @doc ~S"""
   Check if another item has taken this slug.
@@ -489,16 +489,16 @@ defmodule IncrementalSlug do
       iex> IncrementalSlug.makeSlugUnique("Some-title", nil, Post)
       "Some-title-1"
   """
-  # @spec makeSlugUnique(
-  #         slug :: String.t(),
-  #         id :: integer(),
-  #         queryable :: Ecto.Queryable.t(),
-  #         to :: atom()
-  #       ) :: String.t()
-  # def makeSlugUnique(slug, id, queryable, to \\ @incremental_slug.to)
+  @spec makeSlugUnique(
+          slug :: String.t(),
+          id :: integer(),
+          queryable :: Ecto.Queryable.t(),
+          to :: atom()
+        ) :: String.t()
+  def makeSlugUnique(slug, id, queryable, to \\ @incremental_slug.to)
 
-  # def makeSlugUnique(slug, id, queryable, to),
-  #   do: isTaken(slug, id, queryable, to) |> makeSlugUniqueIfTaken(slug, id, queryable, to)
+  def makeSlugUnique(slug, id, queryable, to),
+    do: isTaken(slug, id, queryable, to) |> makeSlugUniqueIfTaken(slug, id, queryable, to)
 
   @doc ~S"""
   Append an increment (1-10), if this slug is already taken.
@@ -575,24 +575,24 @@ defmodule IncrementalSlug do
       iex> post2 = changeset2 |> Repo.insert!()
       %Post{id: 2, title: "Some title", slug: "Some-title-1"}
   """
-  # @spec put(
-  #         changeset :: Ecto.Changeset.t() | nil,
-  #         queryable :: Ecto.Queryable.t() | nil,
-  #         from :: atom(),
-  #         to :: atom()
-  #       ) :: Ecto.Changeset.t()
-  # def put(
-  #       changeset,
-  #       queryable,
-  #       from \\ @incremental_slug.from,
-  #       to \\ @incremental_slug.to
-  #     )
+  @spec put(
+          changeset :: Ecto.Changeset.t() | nil,
+          queryable :: Ecto.Queryable.t() | nil,
+          from :: atom(),
+          to :: atom()
+        ) :: Ecto.Changeset.t()
+  def put(
+        changeset,
+        queryable,
+        from \\ @incremental_slug.from,
+        to \\ @incremental_slug.to
+      )
 
-  # def put(changeset, queryable, _from, _to) when is_nil(changeset) or is_nil(queryable),
-  #   do: changeset
+  def put(changeset, queryable, _from, _to) when is_nil(changeset) or is_nil(queryable),
+    do: changeset
 
-  # def put(changeset, queryable, from, to),
-  #   do: getSlugFromField(changeset, queryable, from, to) |> putSlug(changeset, to)
+  def put(changeset, queryable, from, to),
+    do: getSlugFromField(changeset, queryable, from, to) |> putSlug(changeset, to)
 
   @doc ~S"""
   Put this slug into the selected changeset's field.
