@@ -1,4 +1,3 @@
-* Change "Some title"' to "Slug Doe".
 * test user schema test/test_helper.exs
 * Rename camelCases to snake_case.
 * Try elsewhere on a fresh project with postgre.

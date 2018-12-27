@@ -7,7 +7,9 @@ defmodule IncrementalSlug.MixProject do
       version: "0.1.0",
       elixir: "~> 1.7",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      elixirc_paths: elixirc_paths(Mix.env()),
+      aliases: aliases(),
     ]
   end
 
@@ -18,11 +20,30 @@ defmodule IncrementalSlug.MixProject do
     ]
   end
 
+  # Specifies which paths to compile per environment.
+  defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(_), do: ["lib"]
+
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:ecto, ">= 2.2.0"},
+      {:phoenix_ecto, "~> 3.2"},
       {:slugger, "~> 0.3"},
+      {:postgrex, ">= 0.0.0", only: [:dev, :test]},
+      {:ex_doc, ">= 0.0.0", only: [:dev, :docs]},
+    ]
+  end
+
+
+  # Aliases are shortcuts or tasks specific to the current project.
+  # For example, to create, migrate and run the seeds file at once:
+  #
+  #     $ mix ecto.setup
+  #
+  # See the documentation for `Mix` for more info on aliases.
+  defp aliases do
+    [
+      test: ["ecto.create --quiet", "ecto.migrate", "test"]
     ]
   end
 end
