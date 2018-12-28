@@ -1,4 +1,5 @@
 defmodule IncrementalSlugTest do
   use ExUnit.Case
-   doctest IncrementalSlug
+  alias IncrementalSlug.TestPost
+    doctest IncrementalSlug
 end
