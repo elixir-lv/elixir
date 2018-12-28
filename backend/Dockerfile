@@ -33,7 +33,7 @@ WORKDIR /app
 EXPOSE 4000
 
 ## First time.
-CMD tail -f /dev/null
+# CMD tail -f /dev/null
 
 ## Next time.
-# CMD ["./run.sh"]
+CMD ["./run.sh"]
