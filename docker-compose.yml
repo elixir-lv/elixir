@@ -18,7 +18,7 @@ services:
             context: $BACKEND_DIR
             dockerfile: Dockerfile
         depends_on:
-            - elixir-mysql
+            - elixir-pgadmin
             - elixir-pma
         environment:
             MIX_ENV: dev
@@ -26,8 +26,6 @@ services:
             VIRTUAL_HOST: api.elixir.local
         volumes:
             - '$BACKEND_DIR:/app:rw'
-        # extra_hosts:
-        #     - 'elixir.local api.elixir.local:172.60.1.10'
         networks:
             elixir-net:
                 ipv4_address: 172.60.1.11
