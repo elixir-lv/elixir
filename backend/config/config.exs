@@ -3,31 +3,27 @@
 #
 # This configuration file is loaded before any dependency and
 # is restricted to this project.
-use Mix.Config
 
 # General application configuration
+use Mix.Config
+
 config :backend,
   ecto_repos: [Backend.Repo]
 
 # Configures the endpoint
 config :backend, BackendWeb.Endpoint,
   url: [host: "localhost"],
-  secret_key_base: "dLw5JFdRL/0tHoDFbk0383rHY96sp6HFR6iXZIvowLwo8LugrUPidYpM0VlRUbFL",
+  secret_key_base: "uhqnMuXH9W6hnk5nyh0iVCli/Slx8SycJry5XomYA2uSfpGH7XL0BPVi67eSXLtC",
   render_errors: [view: BackendWeb.ErrorView, accepts: ~w(json)],
   pubsub: [name: Backend.PubSub, adapter: Phoenix.PubSub.PG2]
 
 # Configures Elixir's Logger
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
-  metadata: [:user_id]
+  metadata: [:request_id]
 
-# Char used as separator between words.
-config :slugger, separator_char: ?-
-
-# Path to the file containing replacements.
-config :slugger, replacement_file: "lib/replacements.exs"
-
-config :backend, incremental_slug: %{from_field: :title, to_field: :uri}
+# Use Jason for JSON parsing in Phoenix
+config :phoenix, :json_library, Jason
 
 config :incremental_slug, repo: Backend.Repo
 config :incremental_slug, fields: %{from: :title, to: :uri}

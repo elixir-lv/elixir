@@ -1,11 +1,11 @@
-defmodule Backend.Mixfile do
+defmodule Backend.MixProject do
   use Mix.Project
 
   def project do
     [
       app: :backend,
-      version: "0.0.1",
-      elixir: "~> 1.4",
+      version: "0.1.0",
+      elixir: "~> 1.5",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
@@ -33,15 +33,14 @@ defmodule Backend.Mixfile do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "~> 1.3.4"},
-      {:phoenix_pubsub, "~> 1.0"},
-      {:phoenix_ecto, "~> 3.2"},
+      {:phoenix, "~> 1.4.0"},
+      {:phoenix_pubsub, "~> 1.1"},
+      {:phoenix_ecto, "~> 4.0"},
+      {:ecto_sql, "~> 3.0"},
       {:mariaex, ">= 0.0.0"},
       {:gettext, "~> 0.11"},
-      {:cowboy, "~> 1.0"},
-      {:cors_plug, "~> 1.5"},
-      {:slugger, "~> 0.3"},
-      {:ex_doc, "~> 0.19", only: :dev, runtime: false},
+      {:jason, "~> 1.0"},
+      {:plug_cowboy, "~> 2.0"},
       {:incremental_slug, path: "my_deps/incremental_slug"}
     ]
   end

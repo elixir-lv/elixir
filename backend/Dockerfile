@@ -10,7 +10,7 @@ RUN apt-get install --yes build-essential inotify-tools cron nano mc htop curl n
 RUN mix local.hex --force
 RUN mix local.rebar --force
 RUN mix archive.uninstall phx_new
-RUN mix archive.install hex phx_new 1.4.0
+RUN mix archive.install hex phx_new 1.4.0 --force
 
 # Install node
 RUN curl -sL https://deb.nodesource.com/setup_8.x -o nodesource_setup.sh
@@ -33,7 +33,7 @@ WORKDIR /app
 EXPOSE 4000
 
 ## First time.
-# CMD tail -f /dev/null
+CMD tail -f /dev/null
 
 ## Next time.
-CMD ["./run.sh"]
+# CMD ["./run.sh"]
