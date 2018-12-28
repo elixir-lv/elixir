@@ -1,6 +1,6 @@
 defmodule IncrementalSlugTest do
   use ExUnit.Case
-  doctest IncrementalSlug
+  # doctest IncrementalSlug
 
   test "greets the world" do
     assert IncrementalSlug.hello() == :world

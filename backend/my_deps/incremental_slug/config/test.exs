@@ -8,6 +8,10 @@ config :incremental_slug, IncrementalSlug.TestRepo,
   username: "postgres",
   password: "postgres",
   database: "incremental_slug_test",
-  hostname: "172.60.1.15",
+  hostname: "localhost",
   pool: Ecto.Adapters.SQL.Sandbox,
-  priv: "test/repo/"
+  priv: "test/support/"
+
+if File.exists?("config/test.secret.exs") do
+  import_config "test.secret.exs"
+end

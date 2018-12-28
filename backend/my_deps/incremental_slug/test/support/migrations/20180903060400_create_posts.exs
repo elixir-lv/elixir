@@ -1,17 +1,14 @@
 defmodule Backend.Repo.Migrations.CreatePosts do
   use Ecto.Migration
 
-	def up do
-		"CREATE TABLE IF NOT EXISTS `posts` (
-			`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-			`title` VARCHAR(250) NOT NULL,
-			`slug` VARCHAR(250) NOT NULL,
-			PRIMARY KEY (`id`)
-		) ENGINE=INNODB DEFAULT CHARACTER SET=UTF8;"
-    |> execute
+  def up do
+    create table(:posts) do
+      add :title, :string, size: 50, null: true
+      add :slug, :string, size: 50, null: true
+    end
   end
 
   def down do
-		"DROP TABLE `posts`" |> execute
+		"DROP TABLE posts" |> execute
   end
 end
