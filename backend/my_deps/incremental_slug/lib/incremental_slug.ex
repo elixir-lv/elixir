@@ -230,7 +230,7 @@ defmodule IncrementalSlug do
   def get_greatest_increment(slug, id, queryable, to \\ @incremental_slug.to)
 
   def get_greatest_increment(slug, id, queryable, to),
-    do: find(slug, id, queryable, to) |> get_greatest_increment
+    do: find(slug, id, queryable, to) |> get_greatest_increment()
 
   @doc ~S"""
   Extract an increment from the slug.
@@ -302,7 +302,7 @@ defmodule IncrementalSlug do
   def get_increment(slug, id, queryable, to \\ @incremental_slug.to)
 
   def get_increment(slug, id, queryable, to),
-    do: get_greatest_increment(slug, id, queryable, to) |> get_increment
+    do: slug |> get_greatest_increment(id, queryable, to) |> get_increment()
 
   # @doc false
   @spec get_increment(last_increment :: integer()) :: integer()
@@ -361,8 +361,12 @@ defmodule IncrementalSlug do
         to \\ @incremental_slug.to
       )
 
-  def get_slug_from_field(changeset, queryable, from, to),
-    do: get_change(changeset, from) |> get_unique(get_change(changeset, :id), queryable, to)
+  def get_slug_from_field(changeset, queryable, from, to) do
+    string = changeset |> get_change(from)
+    id = changeset |> get_change(:id)
+
+    string |> get_unique(id, queryable, to)
+  end
 
   @doc ~S"""
   Get a unique slug from a string.
@@ -435,7 +439,7 @@ defmodule IncrementalSlug do
   def is_taken(slug, id, queryable, _to) when is_nil(slug) or id == 0 or is_nil(queryable),
     do: nil
 
-  def is_taken(slug, id, queryable, to), do: get_count(slug, id, queryable, to) > 0
+  def is_taken(slug, id, queryable, to), do: slug |> get_count(id, queryable, to) > 0
 
   @doc ~S"""
   Append an increment (1-10), if this slug is already taken.
@@ -467,7 +471,7 @@ defmodule IncrementalSlug do
   def make_slug_unique(slug, id, queryable, to \\ @incremental_slug.to)
 
   def make_slug_unique(slug, id, queryable, to),
-    do: is_taken(slug, id, queryable, to) |> make_slug_unique_if_taken(slug, id, queryable, to)
+    do: slug |> is_taken(id, queryable, to) |> make_slug_unique_if_taken(slug, id, queryable, to)
 
   @doc ~S"""
   Append an increment (1-10), if this slug is already taken.
@@ -508,7 +512,7 @@ defmodule IncrementalSlug do
   def make_slug_unique_if_taken(taken, slug, id, queryable, to \\ @incremental_slug.to)
 
   def make_slug_unique_if_taken(taken, slug, id, queryable, to) when taken === true do
-    increment = get_increment(slug, id, queryable, to)
+    increment = slug |> get_increment(id, queryable, to)
     slug |> append(increment)
   end
 
@@ -557,7 +561,7 @@ defmodule IncrementalSlug do
     do: changeset
 
   def put(changeset, queryable, from, to),
-    do: get_slug_from_field(changeset, queryable, from, to) |> put_slug(changeset, to)
+    do: changeset |> get_slug_from_field(queryable, from, to) |> put_slug(changeset, to)
 
   @doc ~S"""
   Put this slug into the selected changeset's field.

@@ -1,5 +1,11 @@
-* Follow guidlines.
-* Check unit tests, coverall.
+## Check unit tests, coverall
+
+
+
+## Other
+
+* See if can specify methods for import, alias.
+* Follow the package guidlines and the cpde style guide.
 * prepare hex.
 * create logo and descr for github.
 * put into github.
