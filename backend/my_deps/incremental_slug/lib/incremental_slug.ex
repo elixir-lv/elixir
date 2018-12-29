@@ -75,7 +75,7 @@ defmodule IncrementalSlug do
 
   ## Examples
 
-      iex> IncrementalSlug.TestPost.truncate
+      iex> TestPost.truncate
       iex> IncrementalSlug.find("Slug-Doe", nil, TestPost)
       nil
       iex> post = TestPost.changeset(%TestPost{}, %{title: "Slug Doe"}) |> IncrementalSlug.repo().insert!()
@@ -120,7 +120,7 @@ defmodule IncrementalSlug do
 
   ## Examples
 
-      iex> IncrementalSlug.TestPost.truncate
+      iex> TestPost.truncate
       iex> IncrementalSlug.findItemWithGreatestIncrement(TestPost)
       nil
       iex> post = TestPost.changeset(%TestPost{}, %{title: "Slug Doe"}) |> IncrementalSlug.repo().insert!()
@@ -158,7 +158,7 @@ defmodule IncrementalSlug do
 
   ## Examples
 
-      iex> IncrementalSlug.TestPost.truncate
+      iex> TestPost.truncate
       iex> IncrementalSlug.getCount("Slug-Doe", nil, TestPost)
       0
       iex> post = TestPost.changeset(%TestPost{}, %{title: "Slug Doe"}) |> IncrementalSlug.repo().insert!()
@@ -209,7 +209,7 @@ defmodule IncrementalSlug do
 
   ## Examples
 
-      iex> IncrementalSlug.TestPost.truncate
+      iex> TestPost.truncate
       iex> IncrementalSlug.getGreatestIncrement("Slug-Doe", nil, TestPost)
       0
       iex> post = TestPost.changeset(%TestPost{}, %{title: "Slug Doe"}) |> IncrementalSlug.repo().insert!()
@@ -247,7 +247,7 @@ defmodule IncrementalSlug do
 
   ## Examples
 
-      iex> IncrementalSlug.TestPost.truncate
+      iex> TestPost.truncate
       iex> IncrementalSlug.getGreatestIncrement(nil)
       0
       iex> IncrementalSlug.getGreatestIncrement("Slug-Doe-1")
@@ -281,7 +281,7 @@ defmodule IncrementalSlug do
 
   ## Examples
 
-      iex> IncrementalSlug.TestPost.truncate
+      iex> TestPost.truncate
       iex> IncrementalSlug.getIncrement("Slug-Doe", nil, TestPost)
       1
       iex> post = TestPost.changeset(%TestPost{}, %{title: "Slug Doe"}) |> IncrementalSlug.repo().insert!()
@@ -340,7 +340,7 @@ defmodule IncrementalSlug do
 
   ## Examples
 
-      iex> IncrementalSlug.TestPost.truncate
+      iex> TestPost.truncate
       iex> changeset = TestPost.changeset(%TestPost{}, %{title: "Slug Doe"})
       iex> changeset |> IncrementalSlug.getSlugFromField(TestPost)
       "Slug-Doe"
@@ -382,13 +382,13 @@ defmodule IncrementalSlug do
 
   ## Examples
 
-      iex> IncrementalSlug.TestPost.truncate
-      iex> IncrementalSlug.getUnique("Slug Doe", nil, IncrementalSlug.TestPost)
+      iex> TestPost.truncate
+      iex> IncrementalSlug.getUnique("Slug Doe", nil, TestPost)
       "Slug-Doe"
-      iex> post = IncrementalSlug.TestPost.changeset(%IncrementalSlug.TestPost{}, %{title: "Slug Doe"}) |> IncrementalSlug.repo().insert!()
+      iex> post = TestPost.changeset(%TestPost{}, %{title: "Slug Doe"}) |> IncrementalSlug.repo().insert!()
       iex> post.slug == "Slug-Doe"
       true
-      iex> IncrementalSlug.getUnique("Slug Doe", nil, IncrementalSlug.TestPost)
+      iex> IncrementalSlug.getUnique("Slug Doe", nil, TestPost)
       "Slug-Doe-1"
   """
   @spec getUnique(
@@ -417,7 +417,7 @@ defmodule IncrementalSlug do
 
   ## Examples
 
-      iex> IncrementalSlug.TestPost.truncate
+      iex> TestPost.truncate
       iex> IncrementalSlug.isTaken("Slug-Doe", nil, TestPost)
       false
       iex> post = TestPost.changeset(%TestPost{}, %{title: "Slug Doe"}) |> IncrementalSlug.repo().insert!()
@@ -448,7 +448,7 @@ defmodule IncrementalSlug do
 
   ## Examples
 
-      iex> IncrementalSlug.TestPost.truncate
+      iex> TestPost.truncate
       iex> IncrementalSlug.makeSlugUnique("Slug-Doe", nil, TestPost)
       "Slug-Doe"
       iex> post = TestPost.changeset(%TestPost{}, %{title: "Slug Doe"}) |> IncrementalSlug.repo().insert!()
@@ -481,7 +481,7 @@ defmodule IncrementalSlug do
 
   ## Examples
 
-      iex> IncrementalSlug.TestPost.truncate
+      iex> TestPost.truncate
       iex> IncrementalSlug.makeSlugUniqueIfTaken(false, "Slug-Doe", nil, TestPost)
       "Slug-Doe"
       iex> post = TestPost.changeset(%TestPost{}, %{title: "Slug Doe"}) |> IncrementalSlug.repo().insert!()
@@ -529,7 +529,7 @@ defmodule IncrementalSlug do
 
   ## Examples
 
-      iex> IncrementalSlug.TestPost.truncate
+      iex> TestPost.truncate
       iex> changeset = TestPost.changeset(%TestPost{}, %{title: "Slug Doe"}) |> IncrementalSlug.put(TestPost)
       iex> post = changeset |> IncrementalSlug.repo().insert!()
       iex> post.slug == "Slug-Doe"
@@ -569,7 +569,7 @@ defmodule IncrementalSlug do
 
   ## Examples
 
-      iex> IncrementalSlug.TestPost.truncate
+      iex> TestPost.truncate
       iex> changeset = TestPost.changeset(%TestPost{}, %{title: "Slug Doe"})
       iex> changeset2 = "Slug-Doe" |> IncrementalSlug.putSlug(changeset)
       iex> changeset2.changes
@@ -603,7 +603,7 @@ defmodule IncrementalSlug do
 
   ## Examples
 
-      iex> IncrementalSlug.TestPost.truncate
+      iex> TestPost.truncate
       iex> IncrementalSlug.selectField(TestPost, :slug)
       #Ecto.Query<from t0 in IncrementalSlug.TestPost, select: t0.slug>
       iex> IncrementalSlug.selectField(TestPost, :slug)
@@ -631,7 +631,7 @@ defmodule IncrementalSlug do
 
   ## Examples
 
-      iex> IncrementalSlug.TestPost.truncate
+      iex> TestPost.truncate
       iex> IncrementalSlug.whereSlugWithIncrement(TestPost, "Slug-Doe")
       #Ecto.Query<from t0 in IncrementalSlug.TestPost, where: like(t0.slug, ^"Slug-Doe-_")>
       iex> IncrementalSlug.whereSlugWithIncrement(TestPost, "Henry")
