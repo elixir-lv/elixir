@@ -484,14 +484,16 @@ defmodule IncrementalSlug do
       iex> IncrementalSlug.TestPost.truncate
       iex> IncrementalSlug.makeSlugUniqueIfTaken(false, "Slug-Doe", nil, TestPost)
       "Slug-Doe"
-      iex> TestPost.changeset(%TestPost{}, %{title: "Slug Doe"}) |> IncrementalSlug.repo().insert!()
-      %TestPost{id: 1, title: "Slug Doe", slug: "Slug-Doe"}
+      iex> post = TestPost.changeset(%TestPost{}, %{title: "Slug Doe"}) |> IncrementalSlug.repo().insert!()
+      iex> post.slug == "Slug-Doe"
+      true
       iex>  IncrementalSlug.makeSlugUniqueIfTaken(false, "Slug-Doe", nil, TestPost)
       "Slug-Doe"
       iex>  IncrementalSlug.makeSlugUniqueIfTaken(true, "Slug-Doe", nil, TestPost)
       "Slug-Doe-1"
-      iex> TestPost.changeset(%TestPost{}, %{title: "Slug Doe"}) |> IncrementalSlug.repo().insert!()
-      %TestPost{id: 2, title: "Slug Doe", slug: "Slug-Doe-1"}
+      iex> post1 = TestPost.changeset(%TestPost{}, %{title: "Slug Doe"}) |> IncrementalSlug.repo().insert!()
+      iex> post1.slug == "Slug-Doe-1"
+      true
       iex>  IncrementalSlug.makeSlugUniqueIfTaken(true, "Slug-Doe", nil, TestPost)
       "Slug-Doe-2"
   """
@@ -530,10 +532,12 @@ defmodule IncrementalSlug do
       iex> IncrementalSlug.TestPost.truncate
       iex> changeset = TestPost.changeset(%TestPost{}, %{title: "Slug Doe"}) |> IncrementalSlug.put(TestPost)
       iex> post = changeset |> IncrementalSlug.repo().insert!()
-      %TestPost{id: 1, title: "Slug Doe", slug: "Slug-Doe"}
+      iex> post.slug == "Slug-Doe"
+      true
       iex> changeset2 = TestPost.changeset(%TestPost{}, %{title: "Slug Doe"}) |> IncrementalSlug.put(TestPost)
-      iex> post2 = changeset2 |> IncrementalSlug.repo().insert!()
-      %TestPost{id: 2, title: "Slug Doe", slug: "Slug-Doe-1"}
+      iex> post1 = changeset2 |> IncrementalSlug.repo().insert!()
+      iex> post1.slug == "Slug-Doe-1"
+      true
   """
   @spec put(
           changeset :: Ecto.Changeset.t() | nil,
@@ -569,7 +573,7 @@ defmodule IncrementalSlug do
       iex> changeset = TestPost.changeset(%TestPost{}, %{title: "Slug Doe"})
       iex> changeset2 = "Slug-Doe" |> IncrementalSlug.putSlug(changeset)
       iex> changeset2.changes
-      %{title: "Slug Doe", uri: "Slug-Doe"},
+      %{title: "Slug Doe", slug: "Slug-Doe"}
   """
   @spec putSlug(slug :: String.t(), changeset :: Ecto.Changeset.t(), to :: atom()) ::
           Ecto.Changeset.t()
