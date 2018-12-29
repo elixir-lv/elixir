@@ -51,7 +51,7 @@ defmodule IncrementalSlug do
       iex> IncrementalSlug.exlcudeID(query, nil)
       #Ecto.Query<from t0 in IncrementalSlug.TestPost, limit: 1, select: count("*")>
       iex> IncrementalSlug.exlcudeID(query, 123)
-      #Ecto.Query<from t0 in IncrementalSlug.TestPost, where: p.id != ^123, limit: 1,  select: count("*")>
+      #Ecto.Query<from t0 in IncrementalSlug.TestPost, where: t0.id != ^123, limit: 1, select: count("*")>
   """
   @spec exlcudeID(queryable :: Ecto.Queryable.t(), id :: integer()) :: Ecto.Query.t()
   def exlcudeID(queryable, id) when is_nil(id), do: queryable
@@ -319,8 +319,8 @@ defmodule IncrementalSlug do
 
       iex> IncrementalSlug.getSlug("Slug Doe")
       "Slug-Doe"
-      iex> IncrementalSlug.getSlug(" z e ā Č Ф А - Б В Г	Д š \ / * ^ % ! + ) |")
-      "z-e-a-C-F-A-B-V-GD-s-or"
+      iex> IncrementalSlug.getSlug(" z e ā Č Ф А - Б В Г  Д š \ / * ^ % ! + ) |")
+      "z-e-a-C-F-A-B-V-G-D-s-or"
   """
   @spec getSlug(string :: nil) :: nil
   def getSlug(string) when is_nil(string), do: nil
@@ -383,12 +383,12 @@ defmodule IncrementalSlug do
   ## Examples
 
       iex> IncrementalSlug.TestPost.truncate
-      iex> IncrementalSlug.getUnique("Slug Doe", nil, TestPost)
+      iex> IncrementalSlug.getUnique("Slug Doe", nil, IncrementalSlug.TestPost)
       "Slug-Doe"
-      iex> post = TestPost.changeset(%TestPost{}, %{title: "Slug Doe"}) |> IncrementalSlug.repo().insert!()
+      iex> post = IncrementalSlug.TestPost.changeset(%IncrementalSlug.TestPost{}, %{title: "Slug Doe"}) |> IncrementalSlug.repo().insert!()
       iex> post.slug == "Slug-Doe"
       true
-      iex> IncrementalSlug.getUnique("Slug Doe", nil, %TestPost{})
+      iex> IncrementalSlug.getUnique("Slug Doe", nil, IncrementalSlug.TestPost)
       "Slug-Doe-1"
   """
   @spec getUnique(
