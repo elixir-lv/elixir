@@ -1,7 +1,4 @@
 defmodule IncrementalSlug do
-  import Ecto.Query, warn: false
-  import Ecto.Changeset
-
   @moduledoc """
   Store a unique slug.
 
@@ -11,17 +8,32 @@ defmodule IncrementalSlug do
 
   See `put/4`.
 
-  ## Depends on
+  ## Dependencies
 
-  * [github.com/h4cc/slugger](https://github.com/h4cc/slugger)
+    * [github.com/h4cc/slugger](https://github.com/h4cc/slugger)
+    * [github.com/elixir-ecto/ecto_sql](https://github.com/elixir-ecto/ecto_sql)
 
-  ## Defaults are defined in
+  ## Config
+
+  ### Repo
+
+  ```ex
+  config :incremental_slug, repo: PROJECT.Repo
+  ```
+
+  See `repo/0`.
+
+  ### Fields
 
   ```ex
   config :incremental_slug, fields: %{from: :title, to: :slug}
   ```
   but can be overwiiten on the fly when calling a method.
   """
+
+
+  import Ecto.Query, warn: false
+  import Ecto.Changeset
 
   @incremental_slug Application.get_env(:incremental_slug, :fields, %{from: :title, to: :slug})
   # @repo Application.get_env(:incremental_slug, :repo)
@@ -588,8 +600,15 @@ defmodule IncrementalSlug do
   @doc ~S"""
   Connect to the project's repository.
 
-  Required to collect data from the table like using `IncrementalSlug.repo().one()`.
+  The connection is used when checking if the slug is taken in the table.
+
+  Must be defined in the project's config file:
+
+  ```ex
+  config :incremental_slug, repo: PROJECT.Repo
+  ```
   """
+  @spec repo() :: Ecto.Repo.t()
   def repo() do
     Application.get_env(:incremental_slug, :repo)
   end
