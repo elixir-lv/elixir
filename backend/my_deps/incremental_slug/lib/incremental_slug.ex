@@ -284,12 +284,14 @@ defmodule IncrementalSlug do
       iex> IncrementalSlug.TestPost.truncate
       iex> IncrementalSlug.getIncrement("Slug-Doe", nil, TestPost)
       1
-      iex> TestPost.changeset(%TestPost{}, %{title: "Slug Doe"}) |> IncrementalSlug.repo().insert!()
-      %TestPost{id: 1, title: "Slug Doe", slug: "Slug-Doe"}
+      iex> post = TestPost.changeset(%TestPost{}, %{title: "Slug Doe"}) |> IncrementalSlug.repo().insert!()
+      iex> post.slug == "Slug-Doe"
+      true
       iex> IncrementalSlug.getIncrement("Slug-Doe", nil, TestPost)
       1
-      iex> TestPost.changeset(%TestPost{}, %{title: "Slug Doe"}) |> IncrementalSlug.repo().insert!()
-      %TestPost{id: 2, title: "Slug Doe", slug: "Slug-Doe-1"}
+      iex> post1 = TestPost.changeset(%TestPost{}, %{title: "Slug Doe"}) |> IncrementalSlug.repo().insert!()
+      iex> post1.slug == "Slug-Doe-1"
+      true
       iex> IncrementalSlug.getIncrement("Slug-Doe", nil, TestPost)
       2
   """
@@ -343,7 +345,8 @@ defmodule IncrementalSlug do
       iex> changeset |> IncrementalSlug.getSlugFromField(TestPost)
       "Slug-Doe"
       iex> post = changeset |> IncrementalSlug.repo().insert!()
-      %TestPost{id: 1, title: "Slug Doe", slug: "Slug-Doe"}
+      iex> post.slug == "Slug-Doe"
+      true
       iex> changeset |> IncrementalSlug.getSlugFromField(TestPost)
       "Slug-Doe-1"
   """
@@ -382,8 +385,9 @@ defmodule IncrementalSlug do
       iex> IncrementalSlug.TestPost.truncate
       iex> IncrementalSlug.getUnique("Slug Doe", nil, TestPost)
       "Slug-Doe"
-      iex> TestPost.changeset(%TestPost{}, %{title: "Slug Doe"}) |> IncrementalSlug.repo().insert!()
-      %TestPost{id: 1, title: "Slug Doe", slug: "Slug-Doe"}
+      iex> post = TestPost.changeset(%TestPost{}, %{title: "Slug Doe"}) |> IncrementalSlug.repo().insert!()
+      iex> post.slug == "Slug-Doe"
+      true
       iex> IncrementalSlug.getUnique("Slug Doe", nil, %TestPost{})
       "Slug-Doe-1"
   """
@@ -416,8 +420,9 @@ defmodule IncrementalSlug do
       iex> IncrementalSlug.TestPost.truncate
       iex> IncrementalSlug.isTaken("Slug-Doe", nil, TestPost)
       false
-      iex> TestPost.changeset(%TestPost{}, %{title: "Slug Doe"}) |> IncrementalSlug.repo().insert!()
-      %TestPost{id: 1, title: "Slug Doe", slug: "Slug-Doe"}
+      iex> post = TestPost.changeset(%TestPost{}, %{title: "Slug Doe"}) |> IncrementalSlug.repo().insert!()
+      iex> post.slug == "Slug-Doe"
+      true
       iex> IncrementalSlug.isTaken("Slug-Doe", nil, TestPost)
       true
   """
@@ -446,8 +451,9 @@ defmodule IncrementalSlug do
       iex> IncrementalSlug.TestPost.truncate
       iex> IncrementalSlug.makeSlugUnique("Slug-Doe", nil, TestPost)
       "Slug-Doe"
-      iex> TestPost.changeset(%TestPost{}, %{title: "Slug Doe"}) |> IncrementalSlug.repo().insert!()
-      %TestPost{id: 1, title: "Slug Doe", slug: "Slug-Doe"}
+      iex> post = TestPost.changeset(%TestPost{}, %{title: "Slug Doe"}) |> IncrementalSlug.repo().insert!()
+      iex> post.slug == "Slug-Doe"
+      true
       iex> IncrementalSlug.makeSlugUnique("Slug-Doe", nil, TestPost)
       "Slug-Doe-1"
   """
