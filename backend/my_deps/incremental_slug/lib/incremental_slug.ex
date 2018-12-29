@@ -161,12 +161,14 @@ defmodule IncrementalSlug do
       iex> IncrementalSlug.TestPost.truncate
       iex> IncrementalSlug.getCount("Slug-Doe", nil, TestPost)
       0
-      iex> TestPost.changeset(%TestPost{}, %{title: "Slug Doe"}) |> IncrementalSlug.repo().insert!()
-      %TestPost{id: 1, title: "Slug Doe", slug: "Slug-Doe"}
+      iex> post = TestPost.changeset(%TestPost{}, %{title: "Slug Doe"}) |> IncrementalSlug.repo().insert!()
+      iex> post.slug == "Slug-Doe"
+      true
       iex> IncrementalSlug.getCount("Slug-Doe", nil, TestPost)
       1
-      iex> TestPost.changeset(%TestPost{}, %{title: "Slug Doe"}) |> IncrementalSlug.repo().insert!()
-      %TestPost{id: 2, title: "Slug Doe", slug: "Slug-Doe-1"}
+      iex> post1 = TestPost.changeset(%TestPost{}, %{title: "Slug Doe"}) |> IncrementalSlug.repo().insert!()
+      iex> post1.slug == "Slug-Doe-1"
+      true
       iex> IncrementalSlug.getCount("Slug-Doe", nil, TestPost)
       1
   """
@@ -210,12 +212,14 @@ defmodule IncrementalSlug do
       iex> IncrementalSlug.TestPost.truncate
       iex> IncrementalSlug.getGreatestIncrement("Slug-Doe", nil, TestPost)
       0
-      iex> TestPost.changeset(%TestPost{}, %{title: "Slug Doe"}) |> IncrementalSlug.repo().insert!()
-      %TestPost{id: 1, title: "Slug Doe", slug: "Slug-Doe"}
+      iex> post = TestPost.changeset(%TestPost{}, %{title: "Slug Doe"}) |> IncrementalSlug.repo().insert!()
+      iex> post.slug == "Slug-Doe"
+      true
       iex> IncrementalSlug.getGreatestIncrement("Slug-Doe", nil, TestPost)
       0
-      iex> TestPost.changeset(%TestPost{}, %{title: "Slug Doe"}) |> IncrementalSlug.repo().insert!()
-      %TestPost{id: 2, title: "Slug Doe", slug: "Slug-Doe-1"}
+      iex> post1 = TestPost.changeset(%TestPost{}, %{title: "Slug Doe"}) |> IncrementalSlug.repo().insert!()
+      iex> post1.slug == "Slug-Doe-1"
+      true
       iex> IncrementalSlug.getGreatestIncrement("Slug-Doe", nil, TestPost)
       1
   """
