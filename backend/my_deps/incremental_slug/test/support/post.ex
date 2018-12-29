@@ -3,7 +3,7 @@ defmodule IncrementalSlug.TestPost do
   import Ecto.Changeset
   import Ecto.Query, warn: false
 
-  schema "posts" do
+  schema "test_posts" do
     field(:title, :string)
     field(:slug, :string)
   end
@@ -15,4 +15,6 @@ defmodule IncrementalSlug.TestPost do
     |> IncrementalSlug.put(__MODULE__, :title, :slug)
     |> validate_required([:title, :slug])
   end
+
+  def truncate(), do: "TRUNCATE test_posts RESTART IDENTITY;" |> IncrementalSlug.TestRepo.query
 end
