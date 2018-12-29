@@ -6,12 +6,43 @@ defmodule IncrementalSlug do
 
   ## Example
 
-  See `put/4`.
+  | id | title        | slug             |
+  |----|--------------|------------------|
+  | 1  | Slug Doe     | Slug-Doe         |
+  | 2  | Slug Doe     | Slug-Doe-1       |
+  | 3  | Slug Doe     | Slug-Doe-2       |
+  | 4  | Slug Doe 1   | Slug-Doe-1-1     |
+  | 5  | Slug Doe 1   | Slug-Doe-1-2     |
+  | 6  | Slug Doe 2   | Slug-Doe-2-1     |
+  | 7  | Slug Doe 2   | Slug-Doe-2-2     |
+  | 8  | Slug Doe 1 1 | Slug-Doe-1-1-1   |
+  | 9  | Slug Doe 1 1 | Slug-Doe-1-1-2   |
 
-  ## Dependencies
+  ## How to start?
 
-    * [github.com/h4cc/slugger](https://github.com/h4cc/slugger)
-    * [github.com/elixir-ecto/ecto_sql](https://github.com/elixir-ecto/ecto_sql)
+  Add this code to a module's `changeset/2`
+
+  ```ex
+  |> IncrementalSlug.put(__MODULE__, :title, :slug)
+  ```
+
+  or like this if default fields have been connfiugred.
+
+  ```ex
+  |> IncrementalSlug.put(__MODULE__)
+  ```
+
+  The result may look like this
+
+  ```ex
+  def changeset(post, attrs) do
+    post
+    |> cast(attrs, [:title, :slug])
+    |> IncrementalSlug.put(__MODULE__, :title, :slug)
+    |> validate_required([:title, :slug])
+  end
+  ```
+  For more information see `put/4`.
 
   ## Config
 
@@ -28,7 +59,13 @@ defmodule IncrementalSlug do
   ```ex
   config :incremental_slug, fields: %{from: :title, to: :slug}
   ```
-  but can be overwiiten on the fly when calling a method.
+  Can be overwiiten when calling a method.
+
+  ## Dependencies
+
+    * [github.com/h4cc/slugger](https://github.com/h4cc/slugger)
+    * [github.com/elixir-ecto/ecto_sql](https://github.com/elixir-ecto/ecto_sql)
+
   """
 
 
