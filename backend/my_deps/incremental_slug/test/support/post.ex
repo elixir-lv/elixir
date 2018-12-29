@@ -16,5 +16,5 @@ defmodule IncrementalSlug.TestPost do
     |> validate_required([:title, :slug])
   end
 
-  def truncate(), do: "TRUNCATE test_posts RESTART IDENTITY;" |> IncrementalSlug.TestRepo.query
+  def truncate(), do: "TRUNCATE test_posts RESTART IDENTITY;" |> IncrementalSlug.TestRepo.query()
 end

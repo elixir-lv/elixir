@@ -1,12 +1,9 @@
-* test user schema test/test_helper.exs
-* Rename camelCases to snake_case.
-* Try elsewhere on a fresh project with postgre.
+* Follow guidlines.
+* Check unit tests, coverall.
 * prepare hex.
 * create logo and descr for github.
 * put into github.
 * hex.
-* DocTests
-* Replace the uri field with slug.
 
 ## Use the slug in another module
 

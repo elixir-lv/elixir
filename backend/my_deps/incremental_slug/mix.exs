@@ -9,7 +9,7 @@ defmodule IncrementalSlug.MixProject do
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       elixirc_paths: elixirc_paths(Mix.env()),
-      aliases: aliases(),
+      aliases: aliases()
     ]
   end
 
@@ -30,10 +30,9 @@ defmodule IncrementalSlug.MixProject do
       {:ecto_sql, "~> 3.0"},
       {:slugger, "~> 0.3"},
       {:postgrex, ">= 0.0.0", only: [:dev, :test]},
-      {:ex_doc, ">= 0.0.0", only: [:dev, :docs]},
+      {:ex_doc, ">= 0.0.0", only: [:dev, :docs]}
     ]
   end
-
 
   # Aliases are shortcuts or tasks specific to the current project.
   # For example, to create, migrate and run the seeds file at once:
