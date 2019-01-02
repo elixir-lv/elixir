@@ -1,10 +1,13 @@
 ## Check unit tests, coverall
 
-
+* mysql, postgres.
+* Pass incorrect types. Code should fail gracefully.
+* Empty data, config.
+* diff db.
+* deps lower.
 
 ## Other
 
-* See if can specify methods for import, alias.
 * Follow the package guidlines and the cpde style guide.
 * prepare hex.
 * create logo and descr for github.

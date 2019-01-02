@@ -26,7 +26,7 @@ defmodule IncrementalSlug do
   |> IncrementalSlug.put(__MODULE__, :title, :slug)
   ```
 
-  or like this if default fields have been connfiugred.
+  or if default fields have been connfiugred
 
   ```ex
   |> IncrementalSlug.put(__MODULE__)
@@ -68,9 +68,13 @@ defmodule IncrementalSlug do
 
   """
 
-
   import Ecto.Query, warn: false
-  import Ecto.Changeset
+
+  import Ecto.Changeset,
+    only: [
+      put_change: 3,
+      get_change: 2
+    ]
 
   @incremental_slug Application.get_env(:incremental_slug, :fields, %{from: :title, to: :slug})
   # @repo Application.get_env(:incremental_slug, :repo)
