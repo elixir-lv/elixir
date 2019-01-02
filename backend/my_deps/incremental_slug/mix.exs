@@ -9,6 +9,7 @@ defmodule IncrementalSlug.MixProject do
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       elixirc_paths: elixirc_paths(Mix.env()),
+      test_paths: test_paths(Mix.env()),
       aliases: aliases()
     ]
   end
@@ -23,6 +24,9 @@ defmodule IncrementalSlug.MixProject do
   # Specifies which paths to compile per environment.
   defp elixirc_paths(:test), do: ["lib", "test/support"]
   defp elixirc_paths(_), do: ["lib"]
+
+  defp test_paths(:mysql), do: ["test/mysql"]
+  defp test_paths(_), do: ["test/pg"]
 
   # Run "mix help deps" to learn about dependencies.
   defp deps do
