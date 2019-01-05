@@ -23,6 +23,7 @@ defmodule IncrementalSlug.MixProject do
 
   # Specifies which paths to compile per environment.
   defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(:mysql), do: ["lib", "test/support"]
   defp elixirc_paths(_), do: ["lib"]
 
   defp test_paths(:mysql), do: ["test/mysql"]

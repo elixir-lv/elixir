@@ -11,7 +11,7 @@ config :incremental_slug, IncrementalSlug.TestRepo,
   database: "incremental_slug_test",
   hostname: "localhost",
   pool: Ecto.Adapters.SQL.Sandbox,
-  priv: "test/support/mysql"
+  priv: "test/support"
 
 if File.exists?("config/mysql.secret.exs") do
   import_config "mysql.secret.exs"
